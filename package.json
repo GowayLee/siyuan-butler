@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "tsc",
+    "test": "tsc -p tsconfig.tests.json && node --test .test-dist/tests/**/*.test.js",
     "typecheck": "tsc --noEmit",
     "start:mcp": "node dist/butler-mcp/main.js"
   },
