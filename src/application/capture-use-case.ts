@@ -21,9 +21,23 @@ export interface CaptureReviewPreparation {
   review_result: ReviewResult;
 }
 
-export function prepareCaptureForReview(
-  options: PrepareCaptureForReviewOptions,
-): CaptureReviewPreparation {
+export interface CaptureWritePlanPreparation {
+  draft: SparkleDraft;
+  journal: DailyJournalReadModel;
+  write_plan: WritePlan;
+}
+
+export interface PrepareCaptureWritePlanOptions {
+  plan_id: string;
+  draft: SparkleDraft;
+  journal: DailyJournalReadModel;
+  section_label?: string;
+  scope_note?: string;
+}
+
+export function prepareCaptureWritePlan(
+  options: PrepareCaptureWritePlanOptions,
+): CaptureWritePlanPreparation {
   const target = resolveDailyJournalTarget({
     journal: options.journal,
     section_kind: "sparkles",
@@ -38,14 +52,24 @@ export function prepareCaptureForReview(
     scope_note: options.scope_note,
   });
 
-  const writePlan = normalizeWritePlan({
-    ...basePlan,
-    blocked_by: [...(basePlan.blocked_by ?? []), ...target.blocked_by],
-  });
-
   return {
     draft: options.draft,
-    write_plan: writePlan,
-    review_result: createReviewResultFromWritePlan(writePlan),
+    journal: options.journal,
+    write_plan: normalizeWritePlan({
+      ...basePlan,
+      blocked_by: [...(basePlan.blocked_by ?? []), ...target.blocked_by],
+    }),
+  };
+}
+
+export function prepareCaptureForReview(
+  options: PrepareCaptureForReviewOptions,
+): CaptureReviewPreparation {
+  const prepared = prepareCaptureWritePlan(options);
+
+  return {
+    draft: prepared.draft,
+    write_plan: prepared.write_plan,
+    review_result: createReviewResultFromWritePlan(prepared.write_plan),
   };
 }

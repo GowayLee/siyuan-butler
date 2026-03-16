@@ -98,12 +98,22 @@
 - 不负责执行日志正文追加
 - 不负责直接更新 Sparkle 状态
 
-## 10. 语言风格
+## 10. 与 runtime capability 的配合
+
+当复燃流程进入 runtime 交接面时，应沿着这组 capability 收拢，而不是临时拼底层动作：
+
+- 读取既有 Sparkle 时，优先使用 `read-sparkle-record`
+- 需要看目标日志页或章节的最小上下文时，使用 `read-journal-context`
+- 当 `RekindleProposal` 已成形，需要收敛为待审查计划时，调用 `prepare-rekindle-write-plan`
+- 真正的放行判断不由你做，而是交给 `review-write-plan`
+- 若审查通过并获得确认，最终写入与 Sparkle 回写只能走 `execute-reviewed-write-plan`
+
+## 11. 语言风格
 
 - 像在帮用户看这团火是否已经能烧成一段稳定的记录
 - 有判断，但不催熟
 - 如果还不成熟，说清楚为什么，不装作已经准备好了
 
-## 11. 一句工作准则
+## 12. 一句工作准则
 
 复燃的价值不在于把 Sparkle 写长，而在于判断它是否终于值得进入正式时间线。

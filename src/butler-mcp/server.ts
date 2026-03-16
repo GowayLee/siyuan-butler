@@ -2,11 +2,13 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 
 import { listButlerCapabilities } from "../application/index.js";
+import { registerButlerCapabilityTools } from "./capability-tools.js";
 
 export interface ButlerMcpServerOptions {
   name?: string;
   version?: string;
   instructions?: string;
+  env?: NodeJS.ProcessEnv;
 }
 
 const DEFAULT_SERVER_NAME = "siyuan-butler";
@@ -18,16 +20,16 @@ function buildDefaultInstructions(): string {
   );
 
   return [
-    "SiYuan Butler MCP runtime skeleton.",
-    "It exists to host PKM-oriented capabilities behind a review-before-write boundary.",
-    `Planned capability surface: ${capabilityIds.join(", ")}.`,
+    "SiYuan Butler MCP runtime.",
+    "It hosts only the PKM-oriented capability whitelist behind a review-before-write boundary.",
+    `Registered capability surface: ${capabilityIds.join(", ")}.`,
   ].join(" ");
 }
 
 export function createButlerMcpServer(
   options: ButlerMcpServerOptions = {},
 ): McpServer {
-  return new McpServer(
+  const server = new McpServer(
     {
       name: options.name ?? DEFAULT_SERVER_NAME,
       version: options.version ?? DEFAULT_SERVER_VERSION,
@@ -37,6 +39,10 @@ export function createButlerMcpServer(
       capabilities: {},
     },
   );
+
+  registerButlerCapabilityTools(server, { env: options.env });
+
+  return server;
 }
 
 export async function startButlerMcpServer(

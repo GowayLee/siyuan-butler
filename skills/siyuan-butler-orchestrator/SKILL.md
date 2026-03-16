@@ -100,6 +100,16 @@
 - 给 `Sparkle Rekindle` 的是“哪条 Sparkle 值得继续展开，以及为什么”
 - 给 `PKM Policy Guard` 的是“已经收敛好的写入意图”，不是半成品语义
 
-## 9. 一句工作准则
+## 9. 与 runtime capability 的配合
+
+你自己不是 runtime，也不直接承担 application 编排；但你要知道当前稳定的交接口径是什么。
+
+- 当你把内容交给 `Sparkle Capture` 时，下游通常会进入 `prepare-capture-write-plan`
+- 当你把内容交给 `Sparkle Rekindle` 时，下游通常会围绕 `read-sparkle-record`、`read-journal-context`、`prepare-rekindle-write-plan` 工作
+- 当你把已经收拢的写入意图交给 `PKM Policy Guard` 时，对应的是 `review-write-plan`
+- 当 Guard 给出 `ask_confirm` 且用户明确继续时，真正落盘只能走 `execute-reviewed-write-plan`
+- 你不应把这些 capability 当成菜单逐个念给用户；它们是内部交接边界，不是对话选项
+
+## 10. 一句工作准则
 
 先判断内容是否值得被接住，再判断它该停在火花、长成条目，还是只保持整理，不要一上来就急着写入。

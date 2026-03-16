@@ -20,9 +20,22 @@ export interface RekindleReviewPreparation {
   review_result: ReviewResult;
 }
 
-export function prepareRekindleForReview(
-  options: PrepareRekindleForReviewOptions,
-): RekindleReviewPreparation {
+export interface RekindleWritePlanPreparation {
+  proposal: RekindleProposal;
+  journal: DailyJournalReadModel;
+  write_plan: WritePlan;
+}
+
+export interface PrepareRekindleWritePlanOptions {
+  plan_id: string;
+  proposal: RekindleProposal;
+  journal: DailyJournalReadModel;
+  scope_note?: string;
+}
+
+export function prepareRekindleWritePlan(
+  options: PrepareRekindleWritePlanOptions,
+): RekindleWritePlanPreparation {
   const target = resolveTargetFromWriteHint(options.journal, options.proposal.write_target);
 
   const basePlan = createRekindleWritePlan({
@@ -33,14 +46,24 @@ export function prepareRekindleForReview(
     scope_note: options.scope_note,
   });
 
-  const writePlan = normalizeWritePlan({
-    ...basePlan,
-    blocked_by: [...(basePlan.blocked_by ?? []), ...target.blocked_by],
-  });
-
   return {
     proposal: options.proposal,
-    write_plan: writePlan,
-    review_result: createReviewResultFromWritePlan(writePlan),
+    journal: options.journal,
+    write_plan: normalizeWritePlan({
+      ...basePlan,
+      blocked_by: [...(basePlan.blocked_by ?? []), ...target.blocked_by],
+    }),
+  };
+}
+
+export function prepareRekindleForReview(
+  options: PrepareRekindleForReviewOptions,
+): RekindleReviewPreparation {
+  const prepared = prepareRekindleWritePlan(options);
+
+  return {
+    proposal: prepared.proposal,
+    write_plan: prepared.write_plan,
+    review_result: createReviewResultFromWritePlan(prepared.write_plan),
   };
 }
