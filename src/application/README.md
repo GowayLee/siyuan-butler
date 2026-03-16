@@ -11,6 +11,11 @@
 - 把 `WritePlan` 送进 `Policy Guard` 形成 `ReviewResult`
 - 只在 review 已放行后，才允许进入执行端口
 
+当前目录也开始按 MCP runtime 更容易追踪的方式拆分：
+
+- `services/` - 面向 capability handler 的 application service 入口
+- `workflows/` - 按 capture / rekindle / review / shared 拆开的 use-case 纯编排逻辑
+
 它刻意不承担：
 
 - 对话语气与 Orchestrator 路由

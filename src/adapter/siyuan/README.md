@@ -28,4 +28,12 @@
 - 章节追加默认把标题块当作 append parent
 - Sparkle 读取优先面向 Butler 自己写出的 capture 格式与自定义 attrs
 
+当前代码也已经开始按职责拆分：
+
+- `client.ts` / `config.ts` / `types.ts` 提供底层 HTTP 接线
+- `readers/` 负责 daily journal / sparkle record / journal context 的 read-model 组装
+- `writers/` 负责 append 与 backwrite 的受控执行
+- `codecs/` 负责 markdown 与 attrs 的解析/渲染
+- `adapter.ts` 保持为薄 facade，避免再次长成单个大类
+
 这保证了当前 adapter 仍然是 Butler workflow 的受控执行端，而不是通用 SiYuan SDK。

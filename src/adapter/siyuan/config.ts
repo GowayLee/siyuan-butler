@@ -1,4 +1,4 @@
-import { hasText, normalizeText } from "../../domain/helpers.js";
+import { hasText, normalizeText } from "../../domain/support/helpers.js";
 
 export interface SiyuanConnectionConfig {
   base_url: string;
