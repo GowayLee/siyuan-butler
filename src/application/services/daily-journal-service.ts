@@ -1,8 +1,5 @@
 import type { ButlerReadModelPort } from "../../adapter/ports/contracts.js";
-import type {
-  JournalContextReadModel,
-  SparkleRecordReadModel,
-} from "../../adapter/models/read-model.js";
+import type { JournalContextReadModel } from "../../adapter/models/read-model.js";
 import {
   resolveDailyJournalTargetWorkflow,
   type ResolveDailyJournalTargetCapabilityInput,
@@ -19,13 +16,6 @@ export async function resolveDailyJournalTargetCapability(
   input: ResolveDailyJournalTargetCapabilityInput,
 ): Promise<ResolveDailyJournalTargetResult> {
   return resolveDailyJournalTargetWorkflow(reader, input);
-}
-
-export async function readSparkleRecordCapability(
-  reader: ButlerReadModelPort,
-  sparkle_id: string,
-): Promise<SparkleRecordReadModel | undefined> {
-  return reader.readSparkleRecord(sparkle_id);
 }
 
 export async function readJournalContextCapability(

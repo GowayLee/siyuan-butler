@@ -49,7 +49,7 @@ Application 层不负责：
 
 - 读取 daily note、Sparkle、章节等 read-model
 - 定位 `sparkles` / `journal-body` 等目标 section
-- 执行已经通过 review 的原子写入与必要回写
+- 执行已经通过 review 的原子写入
 - 返回受影响对象与执行摘要
 
 Adapter 层不负责：
@@ -60,59 +60,45 @@ Adapter 层不负责：
 
 ## 4. V0 主链路 capability 白名单
 
+当前最小落地先以 capture 为主；rekindle 保留为 pending 设计，不先占用稳定 runtime capability 面。
+
 ### 4.1 `resolve-daily-journal-target`
 
 - 用途：把目标日志日期收敛成 `TargetPageRef + TargetSectionRef`
 - 典型输入：`journal_date`、`section_kind`
 - 典型输出：可用于 `WritePlan` 的目标页/章节引用，以及未满足前置条件清单
-- 使用方：capture/rekindle use-case
+- 使用方：capture use-case
 - 不做的事：不生成正文，不判断内容价值
 
-### 4.2 `read-sparkle-record`
-
-- 用途：按 `sparkle_id` 读取复燃所需的 Sparkle 快照与最小上下文
-- 典型输入：`sparkle_id`
-- 典型输出：`SparkleSnapshot`、Sparkle 状态、关联日志日期、可回写引用
-- 使用方：rekindle use-case
-- 不做的事：不直接决定这条 Sparkle 是否成熟
-
-### 4.3 `read-journal-context`
+### 4.2 `read-journal-context`
 
 - 用途：读取同日日志页或目标 section 的最小上下文，帮助 application 收敛目标
 - 典型输入：`journal_date`、`section_kind`
 - 典型输出：daily note read-model、section existence、轻量上下文摘要
-- 使用方：capture/rekindle use-case
+- 使用方：capture use-case / future rekindle design
 - 不做的事：不暴露任意全库浏览或原始 SQL 能力给 skill
 
-### 4.4 `prepare-capture-write-plan`
+### 4.3 `prepare-capture-write-plan`
 
 - 用途：把 `SparkleDraft` 收敛为待审查 `WritePlan`
-- 典型输入：`SparkleDraft` + resolved target
+- 典型输入：最小 `SparkleDraft`（`source` / `glow` / `trace?` / `pull?`）+ `journal_date`
 - 典型输出：`WritePlan`
 - 使用方：capture use-case / future MCP capability
 - 不做的事：不直接写入，不绕过 review
 
-### 4.5 `prepare-rekindle-write-plan`
-
-- 用途：把 `RekindleProposal` 收敛为待审查 `WritePlan`
-- 典型输入：`RekindleProposal` + resolved target
-- 典型输出：`WritePlan`
-- 使用方：rekindle use-case / future MCP capability
-- 不做的事：不隐式执行 Sparkle 状态回写
-
-### 4.6 `review-write-plan`
+### 4.4 `review-write-plan`
 
 - 用途：把 `WritePlan` 放进稳定的 Policy Guard 审查边界
 - 典型输入：`WritePlan`
 - 典型输出：`ReviewResult`
-- 使用方：capture/rekindle use-case
+- 使用方：capture use-case / future rekindle design
 - 不做的事：不创作 Sparkle 或正式条目内容
 
-### 4.7 `execute-reviewed-write-plan`
+### 4.5 `execute-reviewed-write-plan`
 
 - 用途：只执行已经被 `ReviewResult` 放行的 `final_write_plan`
 - 典型输入：`ReviewResult` + confirmation flag
-- 典型输出：写入摘要、受影响对象、回写结果
+- 典型输出：写入摘要、受影响对象
 - 使用方：写入确认后的受控执行阶段
 - 不做的事：不接受自由文本、不接受未经 review 的 `WritePlan`
 
@@ -128,13 +114,9 @@ Adapter 层不负责：
 
 ### 5.2 Rekindle 主链路
 
-1. `Sparkle Rekindle` 读取或接收 `RekindleRequest`
-2. application 需要时调用 `read-sparkle-record` 与 `read-journal-context`
-3. `Sparkle Rekindle` 产出 `RekindleProposal`
-4. application 调用 `resolve-daily-journal-target`
-5. application 调用 `prepare-rekindle-write-plan`
-6. application 调用 `review-write-plan`
-7. 若审查放行，再调用 `execute-reviewed-write-plan`
+- 当前保持 pending
+- 先不把它收进稳定 capability 白名单
+- 后续更适合从“如何阅读或查询历史 Sparkle 原文”重新设计入口，而不是先假定存在稳定 `sparkle_id`
 
 ## 6. 明确禁止的越权调用
 
@@ -150,7 +132,7 @@ Adapter 层不负责：
 ## 7. 对 MCP capability 命名的约束
 
 - capability 名称应体现 workflow 目的，而不是底层 endpoint 名
-- capability 入参应优先使用 `SparkleDraft`、`RekindleProposal`、`WritePlan`、`ReviewResult`
+- capability 入参应优先使用最小 `SparkleDraft`、`WritePlan`、`ReviewResult`
 - capability 返回值应优先使用 read-model、`WritePlan`、`ReviewResult`、execution receipt
 - MCP server 现阶段可以只保留 capability 注册位，但不应先暴露 raw tool 菜单
 
@@ -160,7 +142,6 @@ V0 当前最值得先落下的 runtime 能力组合是：
 
 - `resolve-daily-journal-target`
 - `prepare-capture-write-plan`
-- `prepare-rekindle-write-plan`
 - `review-write-plan`
 - `execute-reviewed-write-plan`
 

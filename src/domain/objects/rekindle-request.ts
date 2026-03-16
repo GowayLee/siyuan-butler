@@ -6,7 +6,11 @@ import type {
   RekindleTrigger,
   SparkleSnapshot,
 } from "../value-objects/common.js";
-import { hasText, normalizeText, normalizeTextList } from "../support/helpers.js";
+import {
+  hasText,
+  normalizeText,
+  normalizeTextList,
+} from "../support/helpers.js";
 
 export interface RekindleRequest {
   sparkle_id: string;
@@ -57,7 +61,6 @@ export function normalizeRekindleRequest(
       glow: request.sparkle_snapshot.glow.trim(),
       trace: normalizeTextList(request.sparkle_snapshot.trace),
       pull: normalizeTextList(request.sparkle_snapshot.pull),
-      context: normalizeText(request.sparkle_snapshot.context),
     },
   };
 }

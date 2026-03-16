@@ -1,9 +1,11 @@
-import type { ButlerReadModelPort, ReviewAwareWritePort } from "../ports/contracts.js";
+import type {
+  ButlerReadModelPort,
+  ReviewAwareWritePort,
+} from "../ports/contracts.js";
 import type {
   ControlledWriteReceipt,
   DailyJournalReadModel,
   JournalContextReadModel,
-  SparkleRecordReadModel,
 } from "../models/read-model.js";
 import { hasText } from "../../domain/support/helpers.js";
 import { reviewDecisionNeedsWritePlan } from "../../domain/objects/review-result.js";
@@ -14,7 +16,6 @@ import { loadSiyuanButlerAdapterConfigFromEnv } from "./config.js";
 import { SiyuanClient } from "./client.js";
 import { readDailyJournal } from "./readers/daily-journal-reader.js";
 import { readJournalContext } from "./readers/journal-context-reader.js";
-import { readSparkleRecord } from "./readers/sparkle-record-reader.js";
 import { executeAppendJournalEntry } from "./writers/append-journal-entry-writer.js";
 import { executeAppendSparkle } from "./writers/append-sparkle-writer.js";
 
@@ -34,12 +35,6 @@ export class SiyuanButlerAdapter
     return readDailyJournal(this.client, this.config, journal_date);
   }
 
-  async readSparkleRecord(
-    sparkle_id: string,
-  ): Promise<SparkleRecordReadModel | undefined> {
-    return readSparkleRecord(this.client, this.config, sparkle_id);
-  }
-
   async readJournalContext(input: {
     journal_date: string;
     section_kind?: "sparkles" | "journal-body";
@@ -54,9 +49,9 @@ export class SiyuanButlerAdapter
 
     switch (plan.operation_type) {
       case "append-sparkle":
-        return executeAppendSparkle(this.client, this.config, plan, parentID);
+        return executeAppendSparkle(this.client, plan, parentID);
       case "append-journal-entry":
-        return executeAppendJournalEntry(this.client, this.config, plan, parentID);
+        return executeAppendJournalEntry(this.client, plan, parentID);
       default:
         throw new Error(
           `SiyuanButlerAdapter 暂不支持执行 ${plan.operation_type}。`,
@@ -87,7 +82,9 @@ export class SiyuanButlerAdapter
     const parentId = plan.target_section.section_id ?? plan.target_page.page_id;
 
     if (!hasText(parentId)) {
-      throw new Error("当前 WritePlan 缺少可追加的 parent id，不能执行思源写入。");
+      throw new Error(
+        "当前 WritePlan 缺少可追加的 parent id，不能执行思源写入。",
+      );
     }
 
     return parentId;

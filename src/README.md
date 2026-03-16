@@ -22,6 +22,14 @@
 
 这些类型直接映射 `docs/SiYuan-Butler-skill-spec-V0.md` 与 `docs/Butler-Design/Butler-Object-Contracts-Draft.md` 中已确认的上游对象契约，用来先把工作流对象边界稳定下来。
 
+当前运行时收敛方向已经进一步明确：
+
+- capture 是先落稳的主链路
+- `SparkleDraft` 在 runtime 中保持极小，只保留 `source` / `glow` / `trace?` / `pull?`
+- `journal_date` 属于写入目标输入，不属于 Sparkle 本体
+- 当前默认不写入 Sparkle block attrs
+- rekindle 仍保留为 pending 设计，不作为已稳定开放的 capability 链路
+
 当前 runtime 仍然刻意保持很小，但目录开始围绕 `butler-mcp/` 重排：
 
 - `butler-mcp/capabilities/` 按 capability 拆分 schema、handler、presenter

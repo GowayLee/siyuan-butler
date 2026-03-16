@@ -25,14 +25,18 @@ export function extractHeadingLabel(kramdown: string): string | undefined {
     .trim();
 }
 
-export function extractFirstMeaningfulLine(markdown: string): string | undefined {
+export function extractFirstMeaningfulLine(
+  markdown: string,
+): string | undefined {
   return markdown
     .split("\n")
     .map((line) => line.trim())
     .find((line) => line.length > 0);
 }
 
-export function parseSparklePreview(markdown: string): SparkleSnapshot | undefined {
+export function parseSparklePreview(
+  markdown: string,
+): SparkleSnapshot | undefined {
   const lines = markdown
     .split("\n")
     .map((line) => line.trim())
@@ -57,7 +61,6 @@ export function parseSparklePreview(markdown: string): SparkleSnapshot | undefin
     ?.replace(/^[-*]\s+pull:\s*/i, "");
 
   return {
-    id: "",
     source,
     glow,
     trace: normalizeTextList(traceLine?.split("|").map((item) => item.trim())),

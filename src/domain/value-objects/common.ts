@@ -52,11 +52,7 @@ export type EntryStyleHint = "judgment" | "observation" | "affective" | "mixed";
 
 export type ProposalConfidence = "low" | "medium" | "high";
 
-export type WriteOperationType =
-  | "append-sparkle"
-  | "append-journal-entry"
-  | "update-sparkle-status"
-  | "record-rekindle-backref";
+export type WriteOperationType = "append-sparkle" | "append-journal-entry";
 
 export type WritePlanOrigin = "capture" | "rekindle";
 
@@ -81,13 +77,10 @@ export type JournalDate = string;
 export type IsoTimestamp = string;
 
 export interface SparkleSnapshot {
-  id: string;
   source: string;
   glow: string;
   trace?: string[];
   pull?: string[];
-  sparkle_kind?: SparkleKind;
-  context?: string;
 }
 
 export interface WriteTargetHint {
@@ -118,17 +111,7 @@ export interface ContentPreview {
 }
 
 export interface SideEffect {
-  kind:
-    | "none"
-    | "status-backwrite"
-    | "reference-backwrite"
-    | "multi-block-write";
-  note: string;
-}
-
-export interface BackwriteAction {
-  action_type: "mark-rekindled" | "link-entry" | "update-metadata";
-  target_id: string;
+  kind: "none" | "multi-block-write";
   preview: string;
 }
 

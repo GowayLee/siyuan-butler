@@ -4,10 +4,10 @@
 
 本文档用于整理思源笔记 AI 管家 V0 的整体 skill 规格。
 
-V0 的目标不是一次性做成完整的 AI 笔记系统，而是在保持未来可扩展总体架构的前提下，先实现两条最核心的高层语义工作流：
+V0 的目标不是一次性做成完整的 AI 笔记系统，而是在保持未来可扩展总体架构的前提下，先把最核心的高层语义工作流收拢清楚：
 
 1. Sparkle 创建
-2. Sparkle 复燃
+2. Sparkle 复燃（当前先保留为 pending 设计，不作为已稳定落地的 runtime 主链路）
 
 同时，V0 还需要具备一层独立的标准规则与安全确认机制，确保整套系统的写入行为可控、可预览、可确认。
 
@@ -27,7 +27,7 @@ V0 的目标不是一次性做成完整的 AI 笔记系统，而是在保持未�
 
 - 从自然对话中识别值得记录的内容
 - 以尽可能低摩擦的方式生成 Sparkle
-- 在内容成熟时，将 Sparkle 复燃为日志中的正式条目
+- 在内容成熟时，为未来的 Sparkle 复燃保留设计空间
 - 在所有写入前提供必要的规则检查与确认
 
 ### 2.2 V0 的设计原则
@@ -139,6 +139,8 @@ V0 采用多 skill 架构，但用户始终通过统一的“笔记管家”入�
 
 这是专门处理 Sparkle 复燃的 skill。
 
+但在当前 V0 落地阶段，它仍应视为 pending 设计，而不是已经稳定开放的 runtime 主链路。
+
 它的目标是将一个已有 Sparkle 发展为值得写入日志正文的正式条目。
 
 它的职责包括：
@@ -248,37 +250,24 @@ V0 的主 skill 必须体现“笔记管家”而不是“指令机器人”的�
 
 建议字段：
 
-- id
-- created_at
-- source_type
-- sparkle_kind
 - source
 - glow
 - trace
 - pull
-- source_excerpt
-- context
-- why_it_matters
-- next_hint
-- status
-- target_journal_date
-- capture_mode
-- write_intent
 
 其中：
 
 - `source` 与 `glow` 是核心槽位；前者回答“它从哪里亮起来”，后者回答“这里亮的是什么”
 - `trace` 与 `pull` 是可选增强槽位，用于保留辅助线索与后续牵引方向
-- `sparkle_kind` 用于区分感受型、认知型或混合型 sparkle
-- `context` 是帮助重返的轻量语境，不是背景说明大全
-- `why_it_matters`、`next_hint` 可选，不应退化成必填解释题
-- `status` 初始通常为 `draft` 或 `captured`
+- `SparkleDraft` 不应背负 `id`、状态、日期、attrs 映射等管理字段；这些不是它作为“最小可回忆单元”的成立条件
 
 `SparkleDraft` 的重点是可复燃，而不是格式完整。只要未来的自己能借它回到那个感受、判断、联想或思路，它就成立。
 
 ### 6.2 RekindleRequest
 
 用于表示进入复燃阶段时的输入对象。
+
+当前阶段，这一对象保留为未来设计草案，不要求在 runtime 里先行落地。
 
 它的作用不是把原 Sparkle 抹平成摘要，而是把“为什么现在要继续碰这条 Sparkle”组织成稳定请求。
 
@@ -305,6 +294,8 @@ V0 的主 skill 必须体现“笔记管家”而不是“指令机器人”的�
 用于表示复燃 skill 生成的正式条目提案。
 
 它的核心不是“扩写”，而是“给出一个值得写入正式时间线的提案”。
+
+当前阶段，这一对象同样保留为未来设计草案，不要求在 runtime 里先行落地。
 
 建议字段：
 
@@ -342,16 +333,14 @@ V0 的主 skill 必须体现“笔记管家”而不是“指令机器人”的�
 - target_section
 - content_preview
 - side_effects
-- backwrite_actions
 - needs_confirmation
 - blocked_by
 
 其中：
 
-- `operation_type` 用于区分追加 Sparkle、追加正式条目、状态回写等动作
+- `operation_type` 用于区分追加 Sparkle、追加正式条目等动作
 - `origin` 用于标记此计划来自 Capture 还是 Rekindle
 - `side_effects` 不能省略；即使没有副作用，也应明确写出
-- `backwrite_actions` 用于描述附带回写动作
 - `needs_confirmation` 与 `blocked_by` 用于帮助 Policy Guard 判断能否继续
 
 ### 6.5 ReviewResult
@@ -394,17 +383,13 @@ V0 的上层 skill 只应依赖一组较小且稳定的语义工具白名单。
 ### 7.1 读取类能力
 
 - 读取某天日志页
-- 读取指定 Sparkle
-- 搜索最近的 Sparkle
 - 读取目标章节内容
 - 读取上下文块
 
 ### 7.2 轻写入类能力
 
 - 在今日日志的 Sparkles 节追加 Sparkle
-- 在日志正文节追加复燃条目
-- 更新 Sparkle 状态
-- 记录复燃后的回写信息
+- 在日志正文节追加复燃条目（未来能力，当前 pending）
 
 ### 7.3 结构辅助能力
 
@@ -446,6 +431,8 @@ V0 的上层 skill 只应依赖一组较小且稳定的语义工具白名单。
 ### 8.2 Sparkle 复燃工作流
 
 目标：将已有 Sparkle 发展为日志中的正式条目。
+
+当前阶段，这条工作流先保留为 pending 设计，不作为已稳定落地的 runtime 主链路。
 
 工作流路径如下：
 

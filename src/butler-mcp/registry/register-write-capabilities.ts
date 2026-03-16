@@ -6,9 +6,6 @@ import { executeReviewedWritePlanInputSchema } from "../capabilities/execute-rev
 import { handlePrepareCaptureWritePlan } from "../capabilities/prepare-capture-write-plan/handler.js";
 import { presentPrepareCaptureWritePlanResult } from "../capabilities/prepare-capture-write-plan/presenter.js";
 import { prepareCaptureWritePlanInputSchema } from "../capabilities/prepare-capture-write-plan/schema.js";
-import { handlePrepareRekindleWritePlan } from "../capabilities/prepare-rekindle-write-plan/handler.js";
-import { presentPrepareRekindleWritePlanResult } from "../capabilities/prepare-rekindle-write-plan/presenter.js";
-import { prepareRekindleWritePlanInputSchema } from "../capabilities/prepare-rekindle-write-plan/schema.js";
 import { handleReviewWritePlan } from "../capabilities/review-write-plan/handler.js";
 import { presentReviewWritePlanResult } from "../capabilities/review-write-plan/presenter.js";
 import { reviewWritePlanInputSchema } from "../capabilities/review-write-plan/schema.js";
@@ -24,27 +21,13 @@ export function registerWriteCapabilities(
       "prepare-capture-write-plan",
       {
         title: "准备 Capture 写入计划 · prepare-capture-write-plan",
-        description: "将 SparkleDraft 收敛为可进入 review 的 capture WritePlan。",
+        description:
+          "将最小 SparkleDraft 收敛为可进入 review 的 capture WritePlan。",
         inputSchema: prepareCaptureWritePlanInputSchema,
       },
       async (input) =>
         presentPrepareCaptureWritePlanResult(
           await handlePrepareCaptureWritePlan(context, input),
-        ),
-    );
-  }
-
-  if (capabilityIds.has("prepare-rekindle-write-plan")) {
-    server.registerTool(
-      "prepare-rekindle-write-plan",
-      {
-        title: "准备 Rekindle 写入计划 · prepare-rekindle-write-plan",
-        description: "将 RekindleProposal 收敛为可进入 review 的 journal-entry WritePlan。",
-        inputSchema: prepareRekindleWritePlanInputSchema,
-      },
-      async (input) =>
-        presentPrepareRekindleWritePlanResult(
-          await handlePrepareRekindleWritePlan(context, input),
         ),
     );
   }
@@ -57,7 +40,8 @@ export function registerWriteCapabilities(
         description: "对 WritePlan 应用 Butler 的 Policy Guard review 边界。",
         inputSchema: reviewWritePlanInputSchema,
       },
-      async (input) => presentReviewWritePlanResult(handleReviewWritePlan(input)),
+      async (input) =>
+        presentReviewWritePlanResult(handleReviewWritePlan(input)),
     );
   }
 

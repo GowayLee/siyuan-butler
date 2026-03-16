@@ -57,16 +57,13 @@ Orchestrator 不替 Guard 放行。
 
 ### 5.2 rekindle 主链路
 
-- `read-sparkle-record`
-- `read-journal-context`
-- `resolve-daily-journal-target`
-- `prepare-rekindle-write-plan`
-- `review-write-plan`
-- `execute-reviewed-write-plan`
+- 当前保持 pending
+- 更适合停在成熟度判断、延期建议或手工提案层
 
 ## 6. 当前 runtime 还没有的东西
 
 - 没有搜索最近 Sparkle 的 capability
+- 没有稳定落地的 rekindle capability 主链路
 - 没有给 skill 直接用的任意 append / update / SQL 工具
 - 没有让 skill 绕过 review 的捷径
 

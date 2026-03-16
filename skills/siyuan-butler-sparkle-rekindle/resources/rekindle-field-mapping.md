@@ -1,5 +1,7 @@
 # Rekindle 字段映射
 
+当前 rekindle runtime 仍处于 pending 状态；本文件保留为未来设计草案，而不是当前稳定执行契约。
+
 ## 1. `RekindleProposal` 核心字段
 
 - `source_sparkle_id`
@@ -55,7 +57,5 @@
 
 ## 4. 与 runtime 的边界
 
-- 读取既有 Sparkle 时优先用 `read-sparkle-record`
-- 需要同日日志上下文时，再用 `read-journal-context`
-- `prepare-rekindle-write-plan` 需要 `journal_date`，或 `proposal.write_target.journal_date` 已明确
-- 正式条目与回写动作通常会在 review 阶段触发 `ask_confirm`
+- 当前不要默认承诺这些工具已构成稳定 rekindle 主链路
+- 在 rekindle 重新设计完成前，更适合停在成熟度判断、延期建议或手工提案层

@@ -20,7 +20,7 @@
 - 预览完整
 - 没有额外副作用需要确认
 
-当前最典型场景是低风险的 `append-sparkle`。
+当前最典型、也最稳定的场景是低风险的 `append-sparkle`。
 
 ### 2.2 `ask_confirm`
 
@@ -29,6 +29,8 @@
 - `needs_confirmation === true`
 - `operation_type !== append-sparkle`
 - `side_effects` 中存在非 `none` 项
+
+在当前收窄后的运行时里，这更像“保留给正式条目或未来更复杂动作的确认口”，而不是日常 capture 的默认姿态。
 
 ### 2.3 `downgrade`
 

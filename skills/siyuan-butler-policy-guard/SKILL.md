@@ -1,6 +1,6 @@
 ---
 name: siyuan-butler-policy-guard
-description: 用于审查 `WritePlan` 并守住 propose -> review -> write 的 review 边界。当 capture 或 rekindle 已经收敛出待执行写入、需要确认目标、预览或副作用时，必须使用此技能。它只做审查、确认与降级或放行判断，不创作内容，也不静默执行写入。
+description: 用于审查 `WritePlan` 并守住 propose -> review -> write 的 review 边界。当前稳定主链路以 capture 为主；当待执行写入已经被收敛成 `WritePlan`、需要确认目标、预览或影响范围时，必须使用此技能。它只做审查、确认与降级或放行判断，不创作内容，也不静默执行写入。
 license: AGPL-3.0
 compatibility: opencode
 metadata:
@@ -50,7 +50,6 @@ metadata:
 
 常见补充字段包括：
 
-- `backwrite_actions`
 - `risk_level`
 - `needs_confirmation`
 - `scope_note`
@@ -60,9 +59,9 @@ metadata:
 
 你要特别看清楚这些真实边界：
 
-- `operation_type` 目前只有 `append-sparkle`、`append-journal-entry`、`update-sparkle-status`、`record-rekindle-backref`
+- `operation_type` 目前只有 `append-sparkle`、`append-journal-entry`
 - `target_section.section_kind` 目前只有 `sparkles` 和 `journal-body`
-- `side_effects.kind` 目前会落在 `none`、`status-backwrite`、`reference-backwrite`、`multi-block-write`
+- `side_effects.kind` 目前会落在 `none`、`multi-block-write`
 
 ## 4. 你至少要审的四项检查
 
@@ -103,11 +102,11 @@ metadata:
 - `operation_type !== append-sparkle`
 - `side_effects` 里存在任何非 `none` 的项
 
-这意味着正式条目写入、状态回写、关联回写，本质上都应先让用户看清楚再继续。
+这意味着当前最稳的是低风险 capture 写入；若出现正式条目写入或其他明显扩大影响范围的动作，用户应先看清楚再继续。
 
 ### 5.3 `allow`
 
-仅用于边界已经收拢清楚、且没有额外副作用需要确认的情况。当前最典型的是低风险的 `append-sparkle`。
+仅用于边界已经收拢清楚、且没有额外副作用需要确认的情况。当前最典型、也最稳定的是低风险的 `append-sparkle`。
 
 ### 5.4 关于 `reject`
 
@@ -116,7 +115,7 @@ schema 里保留了 `reject`，但当前这版 `review-write-plan` 实际上主�
 更硬的“不该继续”情况，现阶段更适合在进入 `WritePlan` 之前由上游拦住，例如：
 
 - 用户明确说暂时不记
-- 目标 Sparkle 根本没有被锁定
+- 目标写入对象根本没有被锁定
 - 当前内容还只是闲聊噪声
 
 ## 6. 你的 `ReviewResult` 要与实际 schema 对齐
@@ -160,6 +159,7 @@ schema 里保留了 `reject`，但当前这版 `review-write-plan` 实际上主�
 - 如果降级，重点说明“这次先不落盘，但结果保留在哪里”
 - 不靠夸张语气制造阻力，也不靠模糊话术偷渡写入
 - 若预览文本本身会显示给用户并进入笔记语境，保持第一人称用户视角，不改写成 Butler 对用户内容的转述
+- 当前语气默认更贴近 capture-first，而不是把 Guard 说成一层随时准备处理复杂回写的总闸门
 
 ## 9. 你不该做的事
 

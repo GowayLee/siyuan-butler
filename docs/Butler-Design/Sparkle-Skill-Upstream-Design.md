@@ -31,6 +31,10 @@ Sparkle 主链路的上游设计建立在以下前提之上：
 
 因此，后续 MCP 设计不能越过这份文档，直接把底层 API 暴露成上层工作流。
 
+补充一条当前落地约束：
+
+- 当前 runtime 先把 capture 主链路收拢稳定，rekindle 保留为 pending 设计
+
 ## 3. Sparkle 主链路的角色边界
 
 ### 3.1 `PKM Orchestrator`
@@ -88,11 +92,13 @@ Sparkle 主链路的上游设计建立在以下前提之上：
 - 判断某条 Sparkle 是否已经成熟到值得复燃
 - 决定是否允许写入今日日志
 - 决定最终写入位置以外的复杂策略
-- 执行写入与状态回写
+- 执行写入
 
 ### 3.3 `Sparkle Rekindle`
 
 它负责把既有 Sparkle 推进为正式条目提案，而不是单纯把短句拉长。
+
+但在当前 runtime 落地阶段，它仍保留为 pending 设计，不作为已稳定开放的执行主链路。
 
 它的职责是：
 
@@ -115,7 +121,7 @@ Sparkle 主链路的上游设计建立在以下前提之上：
 - 直接放行写入
 - 把不成熟内容硬写成正式条目
 - 决定所有副作用是否可接受
-- 执行日志写入或 Sparkle 状态回写
+- 执行日志写入
 
 ### 3.4 `PKM Policy Guard`
 
@@ -125,7 +131,7 @@ Sparkle 主链路的上游设计建立在以下前提之上：
 
 - 接收待执行的 `WritePlan`
 - 检查写入目标是否明确、影响是否可预览、语义是否匹配
-- 对正式条目、状态回写和其他有副作用的动作维持确认边界
+- 对正式条目和其他明显扩大范围的动作维持确认边界
 - 产出 `ReviewResult`
 - 在条件不足时将流程降级为只返回提案或建议
 
@@ -193,6 +199,8 @@ Sparkle 主链路的上游设计建立在以下前提之上：
 
 这是从对话进入 Rekindle 的过渡状态。
 
+在当前 runtime 落地阶段，这个状态先保留为上游设计位，不作为默认可执行链路。
+
 进入条件通常是：
 
 - 用户主动要求展开某条 Sparkle
@@ -204,6 +212,8 @@ Sparkle 主链路的上游设计建立在以下前提之上：
 ### 4.5 复燃提案
 
 这是 `Sparkle Rekindle` 的主要工作状态。
+
+在当前 runtime 落地阶段，这个状态仍主要服务于未来设计推演，而不是已经稳定开放的 capability 面。
 
 在这个状态下：
 
@@ -245,7 +255,7 @@ Sparkle 主链路的上游设计建立在以下前提之上：
 - 系统不再扩大写入范围，只等待是否继续
 - 任何确认都只应针对已经审查过的 `WritePlan`
 
-正式条目写入、状态回写或其他明显有副作用的动作，应默认经过这一状态。
+正式条目写入或其他明显有副作用的动作，应默认经过这一状态。
 
 ### 4.8 受控写入与完成状态
 
@@ -256,7 +266,7 @@ Sparkle 主链路的上游设计建立在以下前提之上：
 写入完成后通常进入两类完成状态：
 
 - `captured`：Sparkle 已写入，主结果是轻量保存成功
-- `rekindled`：正式条目已写入，且相关 Sparkle 状态已完成必要回写
+- `rekindled`：正式条目已写入
 
 ### 4.9 降级建议与拒绝记录
 
@@ -295,13 +305,14 @@ Sparkle 主链路的上游设计建立在以下前提之上：
 - `glow`：这里真正发亮的判断、感受、联想或方向
 - `trace`：辅助线索，例如引句、时间点、局部观察，可选
 - `pull`：后续还想往哪边碰的牵引方向，可选
-- `context`：当时的语境，用于帮助未来重返
-- `source_type`：触发来源的类型，例如对话、阅读、音乐、图片、网页
-- `source_excerpt`：原始片段、引用或触发物线索
-- `why_it_matters`：为什么值得留，可选
-- `next_hint`：以后可沿什么方向再碰，可选
-- `target_journal_date`：若要写入日志，应落在哪一天
-- `status`：在 capture 生命周期中的状态
+
+在当前 runtime 落地阶段，`SparkleDraft` 不应默认背负：
+
+- `id`
+- `journal_date`
+- `status`
+- attrs 映射字段
+- 一串只为内部管理服务的元数据
 
 语义约束是：`SparkleDraft` 追求可复燃，不追求完整成文。
 
@@ -309,15 +320,16 @@ Sparkle 主链路的上游设计建立在以下前提之上：
 
 `RekindleRequest` 是进入复燃阶段的输入对象，它把“某条 Sparkle 想继续展开”组织成一个稳定请求。
 
+但在当前 runtime 落地阶段，这个对象仍保留为 pending 设计。
+
 它的作用是：
 
-- 明确当前复燃对象是谁
+- 明确当前围绕的是哪段既有 Sparkle 内容
 - 把原始 Sparkle 与相关上下文重新收拢到一起
 - 把用户这次希望展开到什么程度表达清楚
 
 在 Sparkle 主链路里，最关键的字段是：
 
-- `sparkle_id`：目标 Sparkle 的唯一标识
 - `sparkle_snapshot`：原始 Sparkle 的轻量快照，至少保住 `source`、`glow` 与必要线索
 - `related_context`：相关上下文，如同日记录、对话延伸、补充材料
 - `user_goal`：用户这次是想提炼判断、写成日志、还是仅试探成熟度
@@ -329,21 +341,20 @@ Sparkle 主链路的上游设计建立在以下前提之上：
 
 `RekindleProposal` 是复燃阶段的主产物，表示“这条 Sparkle 现在可以怎样被写成正式条目”。
 
+但在当前 runtime 落地阶段，这个对象仍保留为 pending 设计。
+
 它的作用是：
 
 - 把成熟度判断显式化
 - 给出一个可审查的正式条目提案
-- 告诉后续审查层是否需要回写原 Sparkle 状态
 
 在 Sparkle 主链路里，最关键的字段是：
 
-- `source_sparkle_id`：它来自哪条 Sparkle
 - `rekindle_mode`：本次复燃是 `brief`、`full` 还是 `postpone`
 - `entry_title`：正式条目的标题或标题方向
 - `entry_body`：正式条目正文提案
 - `entry_reason`：为什么现在值得写，而不是继续放着
 - `write_target`：预期写入位置
-- `backref_needed`：是否需要在原 Sparkle 上回写状态或关联信息
 
 语义约束是：`RekindleProposal` 的核心不是“扩写”，而是“给出一个值得写入正式时间线的提案”。
 
@@ -353,12 +364,11 @@ Sparkle 主链路的上游设计建立在以下前提之上：
 
 在 Sparkle 主链路里，最关键的字段是：
 
-- `operation_type`：本次动作类型，例如追加 Sparkle、追加正式条目、状态回写
+- `operation_type`：本次动作类型，例如追加 Sparkle、追加正式条目
 - `target_page`：目标页面
 - `target_section`：目标章节或逻辑位置
 - `content_preview`：写入预览
 - `side_effects`：可能伴随的副作用
-- `backwrite_actions`：需要同步完成的回写动作
 
 语义约束是：`WritePlan` 必须去掉未决歧义，并且能够被清晰预览；如果还不能被预览，就不应进入执行阶段。
 
@@ -383,14 +393,18 @@ Sparkle 主链路的上游设计建立在以下前提之上：
 
 Sparkle 主链路里最重要的不是单个对象，而是对象之间的转换顺序。
 
-标准转换链如下：
+当前稳定链路先收敛为：
 
 1. 对话片段经过 `Sparkle Capture`，形成 `SparkleDraft`
-2. 某条既有 Sparkle 连同补充上下文，被组织成 `RekindleRequest`
-3. `RekindleRequest` 经过成熟度判断，形成 `RekindleProposal`
-4. `SparkleDraft` 或 `RekindleProposal` 被收敛为待审查的 `WritePlan`
-5. `WritePlan` 经过 `PKM Policy Guard` 审查，形成 `ReviewResult`
-6. 只有 `ReviewResult` 允许执行时，后续 runtime 才能执行写入
+2. `SparkleDraft` 被收敛为待审查的 `WritePlan`
+3. `WritePlan` 经过 `PKM Policy Guard` 审查，形成 `ReviewResult`
+4. 只有 `ReviewResult` 允许执行时，后续 runtime 才能执行写入
+
+而 rekindle 相关对象转换，当前先保留为未来设计位：
+
+1. 某条既有 Sparkle 连同补充上下文，被组织成 `RekindleRequest`
+2. `RekindleRequest` 经过成熟度判断，形成 `RekindleProposal`
+3. `RekindleProposal` 以后再收敛进待审查 `WritePlan`
 
 这个顺序意味着：
 
@@ -402,7 +416,7 @@ Sparkle 主链路里最重要的不是单个对象，而是对象之间的转换
 
 Sparkle 主链路的上游设计应持续遵循以下原则：
 
-- 少功能、强结构：先把 Sparkle capture / rekindle 主链路做成闭环，不抢跑未来能力
+- 少功能、强结构：先把 Sparkle capture 主链路做稳，再为 rekindle 预留清晰设计位
 - 低摩擦：优先从现有对话里抽取信息，尽量减少追问
 - 不表单化：追问只用于补关键缺口，不用于索要字段
 - 先提案，后写入：用户先看到草案、提案或预览，再决定是否继续
@@ -416,9 +430,9 @@ Sparkle 主链路的上游设计应持续遵循以下原则：
 
 后续 MCP runtime 只能围绕以下问题设计能力：
 
-- 如何读取 Sparkle、日志页和必要上下文
+- 如何读取日志页和必要上下文
 - 如何把已经明确的 `WritePlan` 预览并受控执行
-- 如何在执行后返回写入结果与必要回写信息
+- 如何在执行后返回写入结果与影响摘要
 
 后续 MCP runtime 不应承担以下职责：
 

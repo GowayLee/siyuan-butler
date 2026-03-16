@@ -10,11 +10,6 @@ export interface SiyuanButlerAdapterConfig extends SiyuanConnectionConfig {
   daily_note_hpath_template: string;
   sparkles_section_label: string;
   journal_body_section_label: string;
-  sparkle_status_attr: string;
-  sparkle_source_attr: string;
-  sparkle_glow_attr: string;
-  sparkle_journal_date_attr: string;
-  sparkle_entry_ref_attr: string;
 }
 
 const DEFAULT_DAILY_NOTE_HPATH_TEMPLATE = "/{{year}}/{{month}}/{{date}}";
@@ -81,17 +76,5 @@ export function loadSiyuanButlerAdapterConfigFromEnv(
     journal_body_section_label:
       normalizeText(env.SIYUAN_JOURNAL_BODY_SECTION_LABEL) ??
       DEFAULT_JOURNAL_BODY_SECTION_LABEL,
-    sparkle_status_attr:
-      normalizeText(env.SIYUAN_SPARKLE_STATUS_ATTR) ?? "custom-butler-status",
-    sparkle_source_attr:
-      normalizeText(env.SIYUAN_SPARKLE_SOURCE_ATTR) ?? "custom-butler-source",
-    sparkle_glow_attr:
-      normalizeText(env.SIYUAN_SPARKLE_GLOW_ATTR) ?? "custom-butler-glow",
-    sparkle_journal_date_attr:
-      normalizeText(env.SIYUAN_SPARKLE_JOURNAL_DATE_ATTR) ??
-      "custom-butler-journal-date",
-    sparkle_entry_ref_attr:
-      normalizeText(env.SIYUAN_SPARKLE_ENTRY_REF_ATTR) ??
-      "custom-butler-entry-ref",
   };
 }

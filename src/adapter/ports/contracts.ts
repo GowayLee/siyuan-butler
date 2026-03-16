@@ -4,12 +4,10 @@ import type {
   ControlledWriteReceipt,
   DailyJournalReadModel,
   JournalContextReadModel,
-  SparkleRecordReadModel,
 } from "../models/read-model.js";
 
 export interface ButlerReadModelPort {
   readDailyJournal(journal_date: string): Promise<DailyJournalReadModel>;
-  readSparkleRecord(sparkle_id: string): Promise<SparkleRecordReadModel | undefined>;
   readJournalContext(input: {
     journal_date: string;
     section_kind?: "sparkles" | "journal-body";

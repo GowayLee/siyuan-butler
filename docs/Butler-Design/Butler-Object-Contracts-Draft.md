@@ -70,22 +70,6 @@
 
 #### 必需字段
 
-- `id: string`
-  - 草案或已落盘 Sparkle 的稳定标识
-  - 在 capture 初期也可以先用临时 id
-
-- `created_at: string`
-  - 创建时间，建议使用 ISO 8601
-  - 用于保留时间痕迹与后续排序
-
-- `source_type: SparkleSourceType`
-  - 触发源类型
-  - 作用是帮助后续理解“它从哪里亮起来”
-
-- `sparkle_kind: SparkleKind`
-  - Sparkle 类型
-  - 用于区分感受型与认知型，不用于硬限制文风
-
 - `source: string`
   - 核心槽位之一
   - 表示触发源，可是曲目、链接、对话主题、实验场景、图片描述、网页标题等
@@ -93,9 +77,6 @@
 - `glow: string`
   - 核心槽位之一
   - 表示最想保住的感受、判断、联想或方向
-
-- `status: SparkleDraftStatus`
-  - capture 生命周期状态
 
 #### 可选字段
 
@@ -108,71 +89,11 @@
   - 可选增强槽位
   - 用于保留后续牵引方向、待展开问题、潜在主题
 
-- `source_excerpt?: string`
-  - 原始片段或触发物局部
-  - 与 `trace` 的区别在于，它更像单个关键摘录
+### 4.4 当前收敛建议
 
-- `context?: string`
-  - 当时语境的轻量说明
-  - 用于帮助未来重返，不是背景交代大全
-
-- `why_it_matters?: string`
-  - 为什么值得留
-  - 只在价值感不够明显时补充，不要求默认存在
-
-- `next_hint?: string`
-  - 下次如果想继续碰，可从哪里继续
-  - 可与 `pull` 并存，但应更简短、更像提醒
-
-- `target_journal_date?: string`
-  - 若需要进入 daily note，预期归属日期
-  - 建议使用 `YYYY-MM-DD`
-
-- `capture_mode?: CaptureMode`
-  - 本次 capture 的形成方式，例如自动抽取、轻追问后成稿、仅用户直述
-
-- `confidence?: CaptureConfidence`
-  - skill 对草案可复燃性的主观把握
-  - 仅用于内部工作流判断，不应暴露成僵硬评分体验
-
-- `write_intent?: WriteIntent`
-  - 当前是否只是成稿、建议保存、或用户已经明确想记下
-
-- `tags_hint?: string[]`
-  - 可选主题提示
-  - 仅作为后续沉淀线索，V0 不要求落盘成正式标签系统
-
-### 4.4 建议枚举
-
-```ts
-type SparkleSourceType =
-  | "conversation"
-  | "reading"
-  | "web"
-  | "music"
-  | "image"
-  | "photo-editing"
-  | "experiment"
-  | "work"
-  | "life"
-  | "other";
-
-type SparkleKind = "affective" | "cognitive" | "mixed";
-
-type SparkleDraftStatus =
-  | "draft"
-  | "captured"
-  | "needs_clarify"
-  | "paused"
-  | "rekindled"
-  | "discarded";
-
-type CaptureMode = "auto-extract" | "minimal-followup" | "user-directed";
-
-type CaptureConfidence = "low" | "medium" | "high";
-
-type WriteIntent = "proposal_only" | "suggest_save" | "user_requested_save";
-```
+- `SparkleDraft` 在当前 runtime 落地阶段应尽量只保留 `source`、`glow`、`trace?`、`pull?`
+- `journal_date` 应作为写入目标输入存在，而不是 `SparkleDraft` 本体字段
+- `id`、状态、attrs 映射字段不应成为 capture 成稿前提
 
 ### 4.5 关键语义约束
 
@@ -181,23 +102,24 @@ type WriteIntent = "proposal_only" | "suggest_save" | "user_requested_save";
 - `glow` 可以是词组、判断句、意象、类比、待展开问题，不要求完整句法
 - 感受型 sparkle 允许比认知型更模糊，但不能完全没有方向感
 - 认知型 sparkle 允许只保留一句判断，但不能退化成材料摘抄
-- `context` 只能帮助重返入口，不能喧宾夺主把草案写成小作文
+- 不让 `SparkleDraft` 背上 id、状态、时间、类型、意图这类管理字段，避免 capture 退化成填表
 
 ### 4.6 为低摩擦 capture 服务的字段
 
 - 核心：`source`、`glow`
 - 增强：`trace`、`pull`
-- 辅助：`source_type`、`sparkle_kind`、`context`
 
 ### 4.7 为 review / write 服务的字段
 
-- `status`
-- `target_journal_date`
-- `write_intent`
-- `capture_mode`
-- `confidence`
+- `journal_date`（作为 capability 输入，而不是 `SparkleDraft` 字段）
 
-## 5. 对象二：`RekindleRequest`
+## 5. 当前阶段关于 rekindle 的说明
+
+- `RekindleRequest` 与 `RekindleProposal` 仍保留为未来设计草案
+- 当前 runtime 先不把它们当作已稳定落地的执行契约
+- 因此下面两节保留为后续设计参考，不代表当前最小落地范围
+
+## 6. 对象二：`RekindleRequest`
 
 ### 5.1 对象目的
 
@@ -268,13 +190,10 @@ type RekindleDepth = "light" | "standard" | "deep";
 type MaturityHint = "unclear" | "emerging" | "ready";
 
 type SparkleSnapshot = {
-  id: string;
   source: string;
   glow: string;
   trace?: string[];
   pull?: string[];
-  sparkle_kind?: SparkleKind;
-  context?: string;
 };
 ```
 
@@ -300,7 +219,7 @@ type SparkleSnapshot = {
 - `constraints`
 - `maturity_hint`
 
-## 6. 对象三：`RekindleProposal`
+## 7. 对象三：`RekindleProposal`
 
 ### 6.1 对象目的
 

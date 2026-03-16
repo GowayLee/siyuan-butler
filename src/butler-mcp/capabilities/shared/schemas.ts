@@ -3,42 +3,10 @@ import { z } from "zod";
 export const sectionKindSchema = z.enum(["sparkles", "journal-body"]);
 
 export const sparkleDraftSchema = z.object({
-  id: z.string(),
-  created_at: z.string(),
-  source_type: z.enum([
-    "conversation",
-    "reading",
-    "web",
-    "music",
-    "image",
-    "photo-editing",
-    "experiment",
-    "work",
-    "life",
-    "other",
-  ]),
-  sparkle_kind: z.enum(["affective", "cognitive", "mixed"]),
   source: z.string(),
   glow: z.string(),
-  status: z.enum([
-    "draft",
-    "captured",
-    "needs_clarify",
-    "paused",
-    "rekindled",
-    "discarded",
-  ]),
   trace: z.array(z.string()).optional(),
   pull: z.array(z.string()).optional(),
-  source_excerpt: z.string().optional(),
-  context: z.string().optional(),
-  why_it_matters: z.string().optional(),
-  next_hint: z.string().optional(),
-  target_journal_date: z.string().optional(),
-  capture_mode: z.enum(["auto-extract", "minimal-followup", "user-directed"]).optional(),
-  confidence: z.enum(["low", "medium", "high"]).optional(),
-  write_intent: z.enum(["proposal_only", "suggest_save", "user_requested_save"]).optional(),
-  tags_hint: z.array(z.string()).optional(),
 });
 
 export const writeTargetSchema = z.object({
@@ -62,7 +30,9 @@ export const rekindleProposalSchema = z.object({
   backref_needed: z.boolean().optional(),
   backref_hint: z.string().optional(),
   downgrade_reason: z.string().optional(),
-  style_hint: z.enum(["judgment", "observation", "affective", "mixed"]).optional(),
+  style_hint: z
+    .enum(["judgment", "observation", "affective", "mixed"])
+    .optional(),
   confidence: z.enum(["low", "medium", "high"]).optional(),
 });
 
@@ -82,12 +52,7 @@ export const targetSectionSchema = z.object({
 
 export const writePlanSchema = z.object({
   plan_id: z.string(),
-  operation_type: z.enum([
-    "append-sparkle",
-    "append-journal-entry",
-    "update-sparkle-status",
-    "record-rekindle-backref",
-  ]),
+  operation_type: z.enum(["append-sparkle", "append-journal-entry"]),
   target_page: targetPageSchema,
   target_section: targetSectionSchema,
   content_preview: z.object({
@@ -97,20 +62,11 @@ export const writePlanSchema = z.object({
   }),
   side_effects: z.array(
     z.object({
-      kind: z.enum(["none", "status-backwrite", "reference-backwrite", "multi-block-write"]),
-      note: z.string(),
+      kind: z.enum(["none", "multi-block-write"]),
+      preview: z.string(),
     }),
   ),
   origin: z.enum(["capture", "rekindle"]),
-  backwrite_actions: z
-    .array(
-      z.object({
-        action_type: z.enum(["mark-rekindled", "link-entry", "update-metadata"]),
-        target_id: z.string(),
-        preview: z.string(),
-      }),
-    )
-    .optional(),
   risk_level: z.enum(["low", "medium", "high"]).optional(),
   needs_confirmation: z.boolean().optional(),
   scope_note: z.string().optional(),
@@ -133,7 +89,9 @@ export const reviewResultSchema = z.object({
   review_summary: z.string(),
   user_prompt: z.string().optional(),
   final_write_plan: writePlanSchema.optional(),
-  downgrade_to: z.enum(["proposal-only", "sparkle-draft-only", "suggestion-only"]).optional(),
+  downgrade_to: z
+    .enum(["proposal-only", "sparkle-draft-only", "suggestion-only"])
+    .optional(),
   downgrade_note: z.string().optional(),
   reject_code: z
     .enum([

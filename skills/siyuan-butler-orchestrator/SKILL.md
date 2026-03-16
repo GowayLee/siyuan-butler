@@ -68,10 +68,9 @@ metadata:
 交接时至少带清楚：
 
 - 这里最值得保住的切面
-- 你判断它更偏 `affective`、`cognitive` 还是 `mixed`
-- 大致 `source_type`
-- 当前写入倾向是 `proposal_only`、`suggest_save` 还是 `user_requested_save`
-- 若对日期有把握，带上 `target_journal_date`
+- 最小的 `source`
+- 最小的 `glow`
+- 如有价值，再补 `trace` 或 `pull`
 
 ### 4.2 交给 `Sparkle Rekindle`
 
@@ -83,10 +82,9 @@ metadata:
 
 交接时至少带清楚：
 
-- 目标 `sparkle_id`
 - 用户是想试探成熟度，还是想形成正式条目
 - 这次更偏 `brief` 还是 `full`
-- 可能落到哪一天的 daily note
+- 相关 Sparkle 原文或当前对话里已经明确拿出来的那段内容
 
 ### 4.3 交给 `PKM Policy Guard`
 
@@ -97,10 +95,8 @@ metadata:
 当前 runtime 的稳定白名单只有这 7 个 capability：
 
 - `resolve-daily-journal-target`
-- `read-sparkle-record`
 - `read-journal-context`
 - `prepare-capture-write-plan`
-- `prepare-rekindle-write-plan`
 - `review-write-plan`
 - `execute-reviewed-write-plan`
 
@@ -117,13 +113,9 @@ metadata:
 
 ### 5.2 rekindle 链路
 
-- 先通过 `read-sparkle-record` 读取目标 Sparkle
-- 需要同日日志最小上下文时，再用 `read-journal-context`
-- 上下文补读、落点解析、结构检查都属于内部准备，默认静默完成
-- 如需解析落点，直接调用 `resolve-daily-journal-target`，目标 section 是 `journal-body`
-- `Sparkle Rekindle` 形成 `RekindleProposal` 后，调用 `prepare-rekindle-write-plan`
-- 然后交给 `review-write-plan`
-- 只有 review 已放行，才允许 `execute-reviewed-write-plan`
+- 当前把 rekindle 视为 pending，不当作已稳定落地的 runtime 主链路
+- 如果用户围绕某条旧 Sparkle 继续讨论，先停在整理、判断成熟度或手工提案层
+- 不假装当前 runtime 已支持可靠的历史 Sparkle 定位、状态回写或正式条目执行面
 
 ### 5.3 交互节奏边界
 
@@ -135,7 +127,7 @@ metadata:
 ### 5.4 当前 runtime 的真实边界
 
 - 现在没有“搜索最近 Sparkle”的 capability，所以不要假装能随手浏览最近火花
-- rekindle 目前应建立在已知 `sparkle_id`、已有上下文，或之前已经在对话里被明确拿出来的 Sparkle 记录之上
+- 当前稳定 runtime 主链路是 capture，不是 rekindle
 - 现在也没有给 skill 用的任意 append / update / SQL 工具，不能承诺自由写入
 
 ## 6. 你不该做的事

@@ -74,35 +74,19 @@ metadata:
 
 当前 Butler-MCP 的 `SparkleDraft` 至少要有这些核心字段：
 
-- `id`
-- `created_at`
-- `source_type`
-- `sparkle_kind`
 - `source`
 - `glow`
-- `status`
 
 可选增强字段包括：
 
 - `trace`
 - `pull`
-- `source_excerpt`
-- `context`
-- `why_it_matters`
-- `next_hint`
-- `target_journal_date`
-- `capture_mode`
-- `confidence`
-- `write_intent`
-- `tags_hint`
 
 填写时遵守这些约束：
 
-- `source_type` 贴近触发源，常用值有 `conversation`、`reading`、`web`、`music`、`image`、`photo-editing`、`experiment`、`work`、`life`
-- `sparkle_kind` 优先在 `affective` / `cognitive` / `mixed` 三者里做判断
-- 在还没真正写入前，`status` 默认更适合是 `draft`；不要提前写成 `captured`
-- `capture_mode` 只在有价值时标记为 `auto-extract`、`minimal-followup` 或 `user-directed`
-- `write_intent` 用来表达当前只是提案、建议保存，还是用户明确要求保存
+- `source` 与 `glow` 缺一不可；没有这两个，就还不算成立的 Sparkle
+- `trace` 与 `pull` 是增强，不是必填项
+- 不为了解释完整而补一串管理字段
 
 ## 6. 你如何产出 `SparkleDraft`
 
@@ -149,9 +133,10 @@ metadata:
 - 日志页定位、section 检查、是否已有 `sparkles` 段落这类准备动作，默认由你静默完成，不要把它们外显成一步一问
 - 如需解析日志页或 section，直接调用 `resolve-daily-journal-target`，capture 的 section 应是 `sparkles`
 - 真要把草案收敛成待审查动作时，调用 `prepare-capture-write-plan`
-- `prepare-capture-write-plan` 需要 `journal_date`，或 `draft.target_journal_date` 已明确；否则会报错
+- `prepare-capture-write-plan` 现在直接要求 `journal_date`
 - 收敛出的 `WritePlan` 只能交给 `review-write-plan`
 - 只有 review 放行为 `allow`，或为 `ask_confirm` 且用户明确继续，才允许 `execute-reviewed-write-plan`
+- 当前 runtime 不再默认写入 Sparkle block attrs
 - 除非缺少关键锚点而导致 `SparkleDraft` 或 `WritePlan` 根本无法成立，否则不要在中途频繁停下来问用户下一步怎么做
 
 ## 8. 你不该做的事

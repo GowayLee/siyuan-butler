@@ -20,11 +20,11 @@ These packages are the agent-facing interaction layer. The main executable logic
 当前已对接的 runtime capability 白名单如下：
 
 - `resolve-daily-journal-target`
-- `read-sparkle-record`
 - `read-journal-context`
 - `prepare-capture-write-plan`
-- `prepare-rekindle-write-plan`
 - `review-write-plan`
 - `execute-reviewed-write-plan`
+
+当前稳定 runtime 主链路先聚焦 capture；rekindle 仍保留为 pending 设计。
 
 这些 capability 是 skill 与 runtime 的受控交接口径，不等于 skill 自己承担这些职责。

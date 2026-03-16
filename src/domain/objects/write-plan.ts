@@ -1,5 +1,4 @@
 import type {
-  BackwriteAction,
   ContentPreview,
   SideEffect,
   SourceRef,
@@ -9,7 +8,11 @@ import type {
   WritePlanOrigin,
   WriteRiskLevel,
 } from "../value-objects/common.js";
-import { hasText, normalizeText, normalizeTextList } from "../support/helpers.js";
+import {
+  hasText,
+  normalizeText,
+  normalizeTextList,
+} from "../support/helpers.js";
 
 export interface WritePlan {
   plan_id: string;
@@ -19,7 +22,6 @@ export interface WritePlan {
   content_preview: ContentPreview;
   side_effects: SideEffect[];
   origin: WritePlanOrigin;
-  backwrite_actions?: BackwriteAction[];
   risk_level?: WriteRiskLevel;
   needs_confirmation?: boolean;
   scope_note?: string;
@@ -34,9 +36,6 @@ export function isWritePlanOperationTargetAligned(plan: WritePlan): boolean {
       return plan.target_section.section_kind === "sparkles";
     case "append-journal-entry":
       return plan.target_section.section_kind === "journal-body";
-    case "update-sparkle-status":
-    case "record-rekindle-backref":
-      return plan.target_section.section_kind === "sparkles";
   }
 }
 
@@ -50,11 +49,7 @@ export function normalizeWritePlan(plan: WritePlan): WritePlan {
     },
     side_effects: plan.side_effects.map((effect) => ({
       ...effect,
-      note: effect.note.trim(),
-    })),
-    backwrite_actions: plan.backwrite_actions?.map((action) => ({
-      ...action,
-      preview: action.preview.trim(),
+      preview: effect.preview.trim(),
     })),
     scope_note: normalizeText(plan.scope_note),
     preconditions: normalizeTextList(plan.preconditions),
@@ -82,11 +77,15 @@ export function listWritePlanBlockingIssues(plan: WritePlan): string[] {
   }
 
   if (plan.side_effects.length === 0) {
-    issues.push("WritePlan 没有 side_effects 说明，不符合 review-before-write 边界。");
+    issues.push(
+      "WritePlan 没有 side_effects 说明，不符合 review-before-write 边界。",
+    );
   }
 
   if (!isWritePlanOperationTargetAligned(plan)) {
-    issues.push("WritePlan 的 operation_type 与 target_section 不匹配，语义边界仍有歧义。");
+    issues.push(
+      "WritePlan 的 operation_type 与 target_section 不匹配，语义边界仍有歧义。",
+    );
   }
 
   if ((plan.blocked_by?.length ?? 0) > 0) {
@@ -105,7 +104,8 @@ export function canWritePlanEnterReview(plan: WritePlan): boolean {
 }
 
 export function describeWritePlanScope(plan: WritePlan): string {
-  const sectionLabel = plan.target_section.section_label ?? plan.target_section.section_kind;
+  const sectionLabel =
+    plan.target_section.section_label ?? plan.target_section.section_kind;
 
   return `${plan.operation_type} -> ${plan.target_page.journal_date} / ${sectionLabel}`;
 }

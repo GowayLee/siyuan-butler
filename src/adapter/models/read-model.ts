@@ -1,8 +1,5 @@
 import type {
-  IsoTimestamp,
   JournalDate,
-  SparkleDraftStatus,
-  SparkleSnapshot,
   TargetSectionRef,
 } from "../../domain/value-objects/common.js";
 
@@ -22,17 +19,6 @@ export interface DailyJournalReadModel {
   page_exists: boolean;
   sparkles_section?: JournalSectionReadModel;
   journal_body_section?: JournalSectionReadModel;
-}
-
-export interface SparkleRecordReadModel {
-  id: string;
-  snapshot: SparkleSnapshot;
-  status: SparkleDraftStatus;
-  journal_date?: JournalDate;
-  page_id?: string;
-  block_id?: string;
-  section_id?: string;
-  updated_at?: IsoTimestamp;
 }
 
 export interface JournalContextReadModel {
