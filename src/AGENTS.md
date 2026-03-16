@@ -9,6 +9,7 @@
 ## STRUCTURE
 
 - `butler-mcp/` - MCP server runtime and protocol-facing entrypoints.
+- `application/` - workflow/use-case orchestration between skills, domain rules, and adapters.
 - `domain/` - stable Butler objects and domain rules.
 - `adapter/` - low-level implementation adapters, including future SiYuan integration.
 - `shared/` - cross-cutting schemas, constants, and utilities.

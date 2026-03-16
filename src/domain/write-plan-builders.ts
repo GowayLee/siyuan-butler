@@ -1,4 +1,4 @@
-import type { TargetPageRef } from "./common.js";
+import type { TargetPageRef, TargetSectionRef } from "./common.js";
 import { hasText, normalizeText } from "./helpers.js";
 import type { RekindleProposal } from "./rekindle-proposal.js";
 import {
@@ -17,6 +17,7 @@ export interface CaptureWritePlanOptions {
   plan_id: string;
   draft: SparkleDraft;
   target_page: TargetPageRef;
+  target_section?: TargetSectionRef;
   section_label?: string;
   scope_note?: string;
 }
@@ -25,6 +26,7 @@ export interface RekindleWritePlanOptions {
   plan_id: string;
   proposal: RekindleProposal;
   target_page?: TargetPageRef;
+  target_section?: TargetSectionRef;
   section_label?: string;
   scope_note?: string;
 }
@@ -55,16 +57,17 @@ export function renderSparkleDraftPreview(draft: SparkleDraft): string {
 export function createCaptureWritePlan(options: CaptureWritePlanOptions): WritePlan {
   const draft = normalizeSparkleDraft(options.draft);
   const blockedBy = listSparkleDraftCoreGaps(draft);
+  const targetSection = options.target_section ?? {
+    section_kind: "sparkles",
+    section_label: normalizeText(options.section_label) ?? "Sparkles",
+    insertion_mode: "append",
+  };
 
   return normalizeWritePlan({
     plan_id: options.plan_id,
     operation_type: "append-sparkle",
     target_page: options.target_page,
-    target_section: {
-      section_kind: "sparkles",
-      section_label: normalizeText(options.section_label) ?? "Sparkles",
-      insertion_mode: "append",
-    },
+    target_section: targetSection,
     content_preview: {
       body: renderSparkleDraftPreview(draft),
       preview_format: "markdown",
@@ -103,18 +106,20 @@ export function createRekindleWritePlan(options: RekindleWritePlanOptions): Writ
     blockedBy.push("RekindleProposal 缺少明确的 journal_date，暂不能收敛成可执行 WritePlan。");
   }
 
+  const targetSection = options.target_section ?? {
+    section_kind: proposal.write_target.section_kind,
+    section_label:
+      normalizeText(options.section_label) ??
+      proposal.write_target.section_label ??
+      "Journal Body",
+    insertion_mode: "append",
+  };
+
   return normalizeWritePlan({
     plan_id: options.plan_id,
     operation_type: "append-journal-entry",
     target_page: targetPage,
-    target_section: {
-      section_kind: proposal.write_target.section_kind,
-      section_label:
-        normalizeText(options.section_label) ??
-        proposal.write_target.section_label ??
-        "Journal Body",
-      insertion_mode: "append",
-    },
+    target_section: targetSection,
     content_preview: {
       title: proposal.entry_title,
       body: proposal.entry_body,

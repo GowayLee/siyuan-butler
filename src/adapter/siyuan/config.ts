@@ -1,0 +1,95 @@
+import { hasText, normalizeText } from "../../domain/helpers.js";
+
+export interface SiyuanConnectionConfig {
+  base_url: string;
+  token?: string;
+}
+
+export interface SiyuanButlerAdapterConfig extends SiyuanConnectionConfig {
+  notebook: string;
+  daily_note_hpath_prefix: string;
+  sparkles_section_label: string;
+  journal_body_section_label: string;
+  sparkle_status_attr: string;
+  sparkle_source_attr: string;
+  sparkle_glow_attr: string;
+  sparkle_journal_date_attr: string;
+  sparkle_entry_ref_attr: string;
+}
+
+const DEFAULT_DAILY_NOTE_HPATH_PREFIX = "/daily";
+const DEFAULT_SPARKLES_SECTION_LABEL = "Sparkles";
+const DEFAULT_JOURNAL_BODY_SECTION_LABEL = "Journal Body";
+
+function trimTrailingSlash(value: string): string {
+  return value.endsWith("/") ? value.slice(0, -1) : value;
+}
+
+function normalizeDailyNoteHPathPrefix(value: string | undefined): string {
+  const normalized = normalizeText(value) ?? DEFAULT_DAILY_NOTE_HPATH_PREFIX;
+
+  if (normalized === "/") {
+    return normalized;
+  }
+
+  return `/${normalized.replace(/^\/+/, "").replace(/\/+$/, "")}`;
+}
+
+export function loadSiyuanConnectionConfigFromEnv(
+  env: NodeJS.ProcessEnv = process.env,
+): SiyuanConnectionConfig {
+  const token = normalizeText(env.SIYUAN_TOKEN);
+  const baseUrl = normalizeText(env.SIYUAN_URL);
+
+  if (baseUrl !== undefined) {
+    return {
+      base_url: trimTrailingSlash(baseUrl),
+      token,
+    };
+  }
+
+  const host = normalizeText(env.SIYUAN_HOST) ?? "127.0.0.1";
+  const port = normalizeText(env.SIYUAN_PORT) ?? "6806";
+
+  return {
+    base_url: `http://${host}:${port}`,
+    token,
+  };
+}
+
+export function loadSiyuanButlerAdapterConfigFromEnv(
+  env: NodeJS.ProcessEnv = process.env,
+): SiyuanButlerAdapterConfig {
+  const connection = loadSiyuanConnectionConfigFromEnv(env);
+  const notebook = normalizeText(env.SIYUAN_NOTEBOOK);
+
+  if (!hasText(notebook)) {
+    throw new Error("缺少 SIYUAN_NOTEBOOK，Butler adapter 不能隐式推断笔记本目标。");
+  }
+
+  return {
+    ...connection,
+    notebook,
+    daily_note_hpath_prefix: normalizeDailyNoteHPathPrefix(
+      env.SIYUAN_DAILY_NOTE_HPATH_PREFIX,
+    ),
+    sparkles_section_label:
+      normalizeText(env.SIYUAN_SPARKLES_SECTION_LABEL) ??
+      DEFAULT_SPARKLES_SECTION_LABEL,
+    journal_body_section_label:
+      normalizeText(env.SIYUAN_JOURNAL_BODY_SECTION_LABEL) ??
+      DEFAULT_JOURNAL_BODY_SECTION_LABEL,
+    sparkle_status_attr:
+      normalizeText(env.SIYUAN_SPARKLE_STATUS_ATTR) ?? "custom-butler-status",
+    sparkle_source_attr:
+      normalizeText(env.SIYUAN_SPARKLE_SOURCE_ATTR) ?? "custom-butler-source",
+    sparkle_glow_attr:
+      normalizeText(env.SIYUAN_SPARKLE_GLOW_ATTR) ?? "custom-butler-glow",
+    sparkle_journal_date_attr:
+      normalizeText(env.SIYUAN_SPARKLE_JOURNAL_DATE_ATTR) ??
+      "custom-butler-journal-date",
+    sparkle_entry_ref_attr:
+      normalizeText(env.SIYUAN_SPARKLE_ENTRY_REF_ATTR) ??
+      "custom-butler-entry-ref",
+  };
+}
