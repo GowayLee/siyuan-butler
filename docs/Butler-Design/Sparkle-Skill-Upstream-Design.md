@@ -291,7 +291,10 @@ Sparkle 主链路的上游设计建立在以下前提之上：
 
 在 Sparkle 主链路里，最关键的字段是：
 
-- `spark`：火花本体，必须能指向真正想保住的切面
+- `source`：火花从哪里亮起来，必须保住触发物
+- `glow`：这里真正发亮的判断、感受、联想或方向
+- `trace`：辅助线索，例如引句、时间点、局部观察，可选
+- `pull`：后续还想往哪边碰的牵引方向，可选
 - `context`：当时的语境，用于帮助未来重返
 - `source_type`：触发来源的类型，例如对话、阅读、音乐、图片、网页
 - `source_excerpt`：原始片段、引用或触发物线索
@@ -315,12 +318,12 @@ Sparkle 主链路的上游设计建立在以下前提之上：
 在 Sparkle 主链路里，最关键的字段是：
 
 - `sparkle_id`：目标 Sparkle 的唯一标识
-- `sparkle_content`：原始 Sparkle 的核心内容
+- `sparkle_snapshot`：原始 Sparkle 的轻量快照，至少保住 `source`、`glow` 与必要线索
 - `related_context`：相关上下文，如同日记录、对话延伸、补充材料
 - `user_goal`：用户这次是想提炼判断、写成日志、还是仅试探成熟度
 - `desired_depth`：这次希望写到多深
 
-语义约束是：`RekindleRequest` 不能把原始 Sparkle 抹平成一段普通摘要，它必须保留这条 Sparkle 最初的火花来源。
+语义约束是：`RekindleRequest` 不能把原始 Sparkle 抹平成一段普通摘要，它必须通过 `sparkle_snapshot` 保留这条 Sparkle 最初的火花来源。
 
 ### 5.3 `RekindleProposal`
 

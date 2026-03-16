@@ -110,6 +110,7 @@ SiYuan Butler 应被实现为两部分：
 |  `- siyuan-butler-policy-guard/
 |- src/
 |  |- butler-mcp/
+|  |- application/
 |  |- domain/
 |  |- adapter/
 |  `- shared/
@@ -166,6 +167,12 @@ SiYuan Butler 应被实现为两部分：
   - Butler MCP Server 本体
   - 负责 MCP 协议接入、工具暴露、会话边界与服务启动
 
+- `src/application/`
+  - workflow/use-case 编排层
+  - 负责把 skill 交下来的语义对象收敛成 runtime 可执行的能力调用
+  - 负责串接 `domain` 规则、target resolver、read-model、review gate 与受控执行边界
+  - 不负责对话语气、成熟度创作判断，也不直接承载底层 SiYuan HTTP 细节
+
 - `src/domain/`
   - 领域对象与规则
   - 例如 `SparkleDraft`、`RekindleRequest`、`RekindleProposal`、`WritePlan`、`ReviewResult`
@@ -204,13 +211,15 @@ SiYuan Butler 应被实现为两部分：
 当前确认下来的边界如下：
 
 - skill 套件负责语义判断、工作流切换、用户沟通方式
-- MCP runtime 负责高封装语义能力的执行
+- application/use-case 层负责把语义对象收敛成稳定 workflow 动作
+- MCP runtime 负责暴露高封装 capability，并把调用落到 application/use-case 层
 - adapter 负责最底层的原子操作
 
 换句话说：
 
 - Skill 决定“现在应该做什么”
-- MCP 决定“怎样把这个 PKM 动作可靠地执行出来”
+- application 决定“这个 workflow 在 runtime 里该如何被收拢、审查与放行”
+- MCP 决定“把哪些受控 capability 暴露给 skill 调用”
 - Adapter 决定“如何与 SiYuan 具体通信”
 
 ## 7. 当前结构设计的几条原则

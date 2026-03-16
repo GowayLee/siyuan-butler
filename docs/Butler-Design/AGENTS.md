@@ -10,6 +10,7 @@
 
 - `Sparkle-Skill-Upstream-Design.md` - Sparkle 主链路的上游设计，聚焦 skill 边界、状态流转与对象交接。
 - `Butler-Object-Contracts-Draft.md` - 五个核心对象的中文契约细化草案。
+- `Workflow-Capability-Mapping.md` - workflow 到 runtime capability 的受控映射与越权边界。
 - `Project-Structure-and-Runtime-Plan.md` - `skill suite + MCP runtime` 的工程分层与目录规划。
 
 ## WHERE TO LOOK
@@ -18,6 +19,7 @@
 - PKM methodology source: `docs/Butler-PKM/Sparkle-model.md`
 - Sparkle workflow and handoff design: `docs/Butler-Design/Sparkle-Skill-Upstream-Design.md`
 - Object contract draft: `docs/Butler-Design/Butler-Object-Contracts-Draft.md`
+- Workflow/capability boundary: `docs/Butler-Design/Workflow-Capability-Mapping.md`
 - Runtime layering plan: `docs/Butler-Design/Project-Structure-and-Runtime-Plan.md`
 
 ## CONVENTIONS
