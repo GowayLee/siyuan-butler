@@ -2,7 +2,7 @@
 
 ## OVERVIEW
 
-- This repo is evolving from a seed bundle into a TypeScript-first SiYuan Butler project with three distinct layers: product/spec docs, Butler runtime design, and future executable code.
+- This repo is evolving from a seed bundle into a TypeScript-first SiYuan Butler project with three distinct layers: product/spec docs, Butler runtime design, and executable runtime code.
 - Treat the Butler as a conversational note steward, not a raw CRUD bot over SiYuan.
 - Core V0 loop: capture a Sparkle, rekindle it into a formal journal entry, and route every write through review.
 - Architectural split is strict: upper layers decide meaning and policy; lower layers perform atomic reads/writes.
@@ -21,8 +21,8 @@
 |                                       Sparkle method materials.
 |- skills/                              Planned Butler skill-suite packages for agent-side routing,
 |                                       interaction stance, and workflow handoff.
-|- src/                                 Planned TypeScript Butler runtime code, centered on the
-|                                       SiYuan-Butler MCP server and domain/application layers.
+|- src/                                 Active TypeScript Butler runtime code, centered on the
+|                                        `butler-mcp/` runtime axis and its supporting layers.
 |- tests/                               Planned unit/integration coverage for the Butler runtime.
 |- vendor/
 |  |- siyuan-mcp-server.ts              Single-file Node MCP server that mirrors SiYuan HTTP APIs
@@ -37,7 +37,7 @@
 - `docs/Butler-Design/` holds project-facing upstream design notes.
 - `docs/Butler-PKM/` is reserved for PKM theory and methodology notes only.
 - `skills/` is the future agent-facing skill-suite surface.
-- `src/` is the future TypeScript runtime surface.
+- `src/` is the active TypeScript runtime surface.
 - `vendor/` remains reference and compatibility glue, not the Butler product surface.
 - There is still no package manifest, tsconfig, CI workflow, or automated test suite yet.
 
@@ -50,6 +50,10 @@
   - `docs/Butler-PKM/AGENTS.md`
   - `skills/AGENTS.md`
   - `src/AGENTS.md`
+  - `src/butler-mcp/AGENTS.md`
+  - `src/application/AGENTS.md`
+  - `src/domain/AGENTS.md`
+  - `src/adapter/AGENTS.md`
   - `tests/AGENTS.md`
   - `vendor/AGENTS.md`
 - Use the root guide for cross-cutting decisions: spec-vs-implementation conflicts, write-safety expectations, naming, and repo-wide limits.
@@ -71,7 +75,12 @@
 - `docs/Butler-Design/Sparkle-Skill-Upstream-Design.md` clarifies the Sparkle-side skill boundaries, workflow state flow, and object-contract handoff before MCP capability design.
 - `docs/Butler-Design/Project-Structure-and-Runtime-Plan.md` records the current decision to build a TypeScript Butler MCP runtime first and let a skill suite sit above it.
 - `skills/` is reserved for four Butler-facing skill packages that map onto the conceptual skills in the spec.
-- `src/` is reserved for the Butler runtime implementation, with `butler-mcp/`, `domain/`, `adapter/`, and `shared/` as the primary planned subtrees.
+- `src/` now centers on `butler-mcp/` as the runtime axis, with `application/`, `domain/`, and `adapter/` supporting the capability surface rather than acting as equal top-level products.
+- `src/index.ts` intentionally exports only `butler-mcp/`; internal layers should be imported from their own subtree entries or concrete modules.
+- `src/butler-mcp/` is organized around `runtime/`, `registry/`, and `capabilities/<capability-id>/`.
+- `src/application/` is organized around `services/` and `workflows/`.
+- `src/domain/` is organized around `value-objects/`, `support/`, `objects/`, `builders/`, and `policies/`.
+- `src/adapter/` is organized around `ports/`, `models/`, `resolvers/`, and `siyuan/`.
 - `vendor/siyuan-mcp-server.ts` is organized by conceptual sections inside one file:
   - env/bootstrap and `api()` transport helper
   - MCP tool schema registration
@@ -87,6 +96,7 @@
 - Any new write path should make review/preview behavior obvious; do not add silent mutations.
 - Prefer narrow semantic operations over dumping the full SiYuan API surface into user-facing flows.
 - Design Butler MCP capabilities from the skill/workflow side downward; do not let raw SiYuan endpoints define the Butler tool model.
+- Inside `src/`, build outward from the `butler-mcp` capability surface, then let `application/`, `domain/`, and `adapter/` support that boundary.
 - Keep notebook targeting explicit; current `create_doc` behavior requires a `notebook` argument and cannot infer one.
 - Treat `SIYUAN_WORKSPACE` as removed. Runtime config is `SIYUAN_URL` or `SIYUAN_HOST` plus `SIYUAN_PORT`, with optional `SIYUAN_TOKEN`.
 - Chinese source text is authoritative here; preserve meaning when translating, summarizing, or renaming concepts.
@@ -98,6 +108,7 @@
 - Do not assume the future `skills/` and `shared/` layout already exists in this repo.
 - Do not let the broad MCP tool list redefine the intended product surface; the spec explicitly calls for a smaller semantic whitelist.
 - Do not treat `vendor/` as the Butler runtime implementation plan; it is reference material and temporary glue.
+- Do not keep describing `src/` as a purely planned skeleton or as four equal runtime centers; the current implementation is already organized around `butler-mcp/`.
 - Do not rely on implicit notebook selection or workspace-path assumptions that the current adapter does not support.
 - Do not add generic scaffolding, framework boilerplate, or fake command docs that are not present in the repo.
 
@@ -117,9 +128,9 @@
 
 ## NOTES
 
-- First-pass navigation order: spec in `docs/SiYuan-Butler-skill-spec-V0.md`, then runtime code in `vendor/siyuan-mcp-server.ts`, then endpoint reference in `vendor/SiYuan-API_zh_CN.md`.
+- First-pass navigation order: spec in `docs/SiYuan-Butler-skill-spec-V0.md`, then Butler runtime design in `docs/Butler-Design/Project-Structure-and-Runtime-Plan.md`, then current runtime code in `src/`, then reference code in `vendor/siyuan-mcp-server.ts`.
 - `docs/SiYuan-Butler-skill-spec-V0.md` is aspirational in places; call out mismatches instead of rewriting the spec to match current implementation drift.
 - `docs/Butler-Design/Sparkle-Skill-Upstream-Design.md` is the current upstream-design bridge for Sparkle workflows before MCP capability design.
 - `docs/Butler-Design/Project-Structure-and-Runtime-Plan.md` is the current architecture bridge between the spec and the future runtime.
 - `vendor/` is mixed: one executable integration file plus one upstream-style reference doc. Keep those roles distinct.
-- Future growth should add local `AGENTS.md` files early when new top-level subtrees become real.
+- Continue adding local `AGENTS.md` files early when a subtree starts carrying distinct editing constraints.
