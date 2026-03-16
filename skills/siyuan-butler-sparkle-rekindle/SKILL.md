@@ -15,6 +15,21 @@ metadata:
 
 你的任务不是把短句机械拉长，而是判断：这条 Sparkle 现在是否已经成熟到值得进入 daily note 的正文时间线。如果值得，你生成 `RekindleProposal`；如果不值得，你宁可延期，也不要硬写。
 
+## 1.1 开始前先读资源
+
+在实际执行这个 skill 前，先读取下面这些资源文件；不要把它们视为尾注式参考资料。
+
+- [`sparkle-foundations.md`](.opencode/skills/siyuan-butler-sparkle-rekindle/resources/sparkle-foundations.md)：先确认 rekindle 必须继承的 Sparkle 起点
+- [`rekindle-field-mapping.md`](.opencode/skills/siyuan-butler-sparkle-rekindle/resources/rekindle-field-mapping.md)：再确认 `RekindleProposal` 字段与 runtime 边界
+- [`rekindle-maturity-guide.md`](.opencode/skills/siyuan-butler-sparkle-rekindle/resources/rekindle-maturity-guide.md)：判断成熟度与 `postpone` 边界时必读
+- [`rekindle-examples.md`](.opencode/skills/siyuan-butler-sparkle-rekindle/resources/rekindle-examples.md)：需要校准正文写法和提案风格时补读例子
+
+执行时遵守这些约束：
+
+- 这些路径默认指向 opencode 已安装 skill 目录中的真实文件，不是项目工作区根目录下的 `resources/`
+- 如果你还没读过这些文件，就不要直接开始产出 `RekindleProposal`
+- 当你对成熟度、字段映射、正文风格拿不准时，先回去读资源，再继续工作
+
 ## 2. 你的工作基线
 
 - 复燃不是扩写，而是成熟度判断
@@ -65,6 +80,18 @@ metadata:
 - 这次更适合 `brief` 还是 `full`
 - 当前真正让它成熟的那一下变化是什么
 
+### 5.4 落到笔记文本时必须使用第一人称
+
+只要你在编写会进入用户笔记的文本，无论是 `entry_title`、`entry_body`、`summary_line`，还是其他会被写入或预览的正文片段，都默认采用第一人称，像用户自己正在写下这段正式记录。
+
+执行时遵守这些约束：
+
+- 默认从用户视角写，让判断、感受、转折和结论由“我”来承担
+- 可以整理表达，但不要把用户的思考改写成旁观式总结
+- 禁止使用“用户意识到……”“他认为……”“这条 Sparkle 表达了……”这类第三人称转述
+- 不把复燃正文写成 Butler 对用户思想的说明报告
+- 如果原 Sparkle 中已有很强的自述口吻，复燃时应尽量延续，而不是重新翻译成解释腔
+
 ## 6. 你的 `RekindleProposal` 要与实际 schema 对齐
 
 当前 Butler-MCP 的 `RekindleProposal` 核心字段是：
@@ -103,11 +130,13 @@ metadata:
 
 - 用 `read-sparkle-record` 读取目标 Sparkle
 - 需要同日日志最小上下文时，再调用 `read-journal-context`
-- 如需先确认落点，可调用 `resolve-daily-journal-target`，section 应指向 `journal-body`
+- Sparkle 定位、上下文补读、落点解析这类准备动作默认由你静默完成，不要把它们外显成连续征求用户许可的步骤
+- 如需解析落点，直接调用 `resolve-daily-journal-target`，section 应指向 `journal-body`
 - 当 `RekindleProposal` 已成形，才调用 `prepare-rekindle-write-plan`
 - `prepare-rekindle-write-plan` 需要 `journal_date`，或 `proposal.write_target.journal_date` 已明确；否则会报错
 - 真正的放行判断不由你做，而是交给 `review-write-plan`
 - 若 review 为 `ask_confirm`，只有用户明确继续后，才能进入 `execute-reviewed-write-plan`
+- 除非缺少关键语义锚点，以至于 `RekindleProposal` 根本无法成立，否则不要在中途频繁停下来问用户下一步要不要继续
 
 ## 8. 当前 review 边界下你该怎么判断
 
@@ -131,13 +160,14 @@ metadata:
 - 像在帮用户看这团火是否已经能烧成一段稳定记录
 - 有判断，但不催熟
 - 如果还不成熟，就直说它该继续放着或先停在提案层
+- 真正写正文提案时，像用户本人在落笔，而不是 Butler 在转述用户
 
-## 11. 本 skill 配套资源
+## Additional resources
 
-- `resources/sparkle-foundations.md`：rekindle 必须继承的 Sparkle 起点
-- `resources/rekindle-maturity-guide.md`：成熟度判断与 `postpone` 边界
-- `resources/rekindle-examples.md`：brief / full / postpone 例子
-- `resources/rekindle-field-mapping.md`：`RekindleProposal` 字段映射与 runtime 边界
+- For Sparkle foundations, see [`sparkle-foundations.md`](.opencode/skills/siyuan-butler-sparkle-rekindle/resources/sparkle-foundations.md)
+- For rekindle field mapping and runtime boundaries, see [`rekindle-field-mapping.md`](.opencode/skills/siyuan-butler-sparkle-rekindle/resources/rekindle-field-mapping.md)
+- For maturity rules and postpone boundaries, see [`rekindle-maturity-guide.md`](.opencode/skills/siyuan-butler-sparkle-rekindle/resources/rekindle-maturity-guide.md)
+- For rekindle examples, see [`rekindle-examples.md`](.opencode/skills/siyuan-butler-sparkle-rekindle/resources/rekindle-examples.md)
 
 ## 12. 一句工作准则
 

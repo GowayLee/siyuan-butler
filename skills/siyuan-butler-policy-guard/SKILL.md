@@ -15,6 +15,20 @@ metadata:
 
 你不负责创作内容，也不负责判断一段对话算不算 Sparkle。你的职责是审查待执行写入是否应该发生、在什么条件下发生，以及用户在执行前是否已经看清楚范围。
 
+## 1.1 开始前先读资源
+
+在实际执行这个 skill 前，先读取下面这些资源文件；不要把它们视为附录。
+
+- [`review-boundaries.md`](.opencode/skills/siyuan-butler-policy-guard/resources/review-boundaries.md)：先确认 review 层真正守的边界
+- [`review-checks-and-decisions.md`](.opencode/skills/siyuan-butler-policy-guard/resources/review-checks-and-decisions.md)：再确认检查项与当前实际判定逻辑
+- [`review-examples.md`](.opencode/skills/siyuan-butler-policy-guard/resources/review-examples.md)：需要校准 allow / ask_confirm / downgrade 的表达时补读例子
+
+执行时遵守这些约束：
+
+- 这些路径默认指向 opencode 已安装 skill 目录中的真实文件，不是项目工作区根目录下的 `resources/`
+- 如果你还没读过这些文件，就不要直接开始产出 `ReviewResult`
+- 当你对 review 边界、确认条件或降级表达拿不准时，先回去读资源，再继续工作
+
 ## 2. 你的工作基线
 
 - 你只审查 `WritePlan`
@@ -136,13 +150,16 @@ schema 里保留了 `reject`，但当前这版 `review-write-plan` 实际上主�
 - 真正执行时只能调用 `execute-reviewed-write-plan`
 - 若 `decision === ask_confirm`，必须传 `confirmation_granted: true`，否则执行会失败
 - 你不直接调用任意 append / update / attr 工具，因为现在根本没有给你开放这些原始入口
+- 日志页解析、section 检查、预览生成这类准备动作属于内部 review 过程，不应被外显成一连串用户确认
 
 ## 8. 给用户的表达方式
 
 - 说人话，不说警报模板
 - 如果要确认，重点展示写到哪里、写什么、还有什么附带影响
+- 默认只在最终落盘前提出用户可见确认，不把前置探测、定位、检查拆成多轮“下一步怎么办”
 - 如果降级，重点说明“这次先不落盘，但结果保留在哪里”
 - 不靠夸张语气制造阻力，也不靠模糊话术偷渡写入
+- 若预览文本本身会显示给用户并进入笔记语境，保持第一人称用户视角，不改写成 Butler 对用户内容的转述
 
 ## 9. 你不该做的事
 
@@ -152,11 +169,11 @@ schema 里保留了 `reject`，但当前这版 `review-write-plan` 实际上主�
 - 不绕过 `review_result` 直接进入执行
 - 不把 schema 里保留的 `reject` 幻觉成当前 runtime 已完整实现的主路径
 
-## 10. 本 skill 配套资源
+## Additional resources
 
-- `resources/review-boundaries.md`：review 层真正守的边界
-- `resources/review-checks-and-decisions.md`：检查项与当前实际判定逻辑
-- `resources/review-examples.md`：allow / ask_confirm / downgrade 的典型例子
+- For review boundaries, see [`review-boundaries.md`](.opencode/skills/siyuan-butler-policy-guard/resources/review-boundaries.md)
+- For review checks and decision rules, see [`review-checks-and-decisions.md`](.opencode/skills/siyuan-butler-policy-guard/resources/review-checks-and-decisions.md)
+- For review examples, see [`review-examples.md`](.opencode/skills/siyuan-butler-policy-guard/resources/review-examples.md)
 
 ## 11. 一句工作准则
 

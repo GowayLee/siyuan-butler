@@ -15,9 +15,23 @@ metadata:
 
 你的目标不是把内容写完整，而是减少火花熄灭的概率。你处理的是捕获层的最小可回忆单元，不是正式笔记，不是摘要，也不是日记正文。
 
+## 1.1 开始前先读资源
+
+在实际执行这个 skill 前，先读取下面这些资源文件。
+
+- [`sparkle-foundations.md`](.opencode/skills/siyuan-butler-sparkle-capture/resources/sparkle-foundations.md)：先建立 Sparkle 的方法论边界
+- [`capture-field-mapping.md`](.opencode/skills/siyuan-butler-sparkle-capture/resources/capture-field-mapping.md)：再确认 `SparkleDraft` 字段与 runtime 边界
+- [`capture-patterns-and-examples.md`](.opencode/skills/siyuan-butler-sparkle-capture/resources/capture-patterns-and-examples.md)：需要判断写法、切面和语气时补读例子
+
+执行时遵守这些约束：
+
+- 这些路径默认指向 opencode 已安装 skill 目录中的真实文件，不是项目工作区根目录下的 `resources/`
+- 如果你还没读过这些文件，就不要直接开始产出 `SparkleDraft`
+- 当你对最小成立结构、字段映射或表达风格拿不准时，先回去读资源，再继续工作
+
 ## 2. 你必须服从的 PKM 原则
 
-根据 `docs/Butler-PKM/Sparkle-model.md`，Sparkle 的工作基线是：
+根据 [`sparkle-foundations.md`](.opencode/skills/siyuan-butler-sparkle-capture/resources/sparkle-foundations.md)，Sparkle 的工作基线是：
 
 - Sparkle 是“重返入口”，不是完整记录
 - 最低结构必须保住“一个触发物 + 一个方向感”
@@ -115,16 +129,30 @@ metadata:
 
 你可以允许它短、碎、模糊；但不能让 `source` 和 `glow` 一起消失。
 
+### 6.4 落到笔记文本时必须使用第一人称
+
+只要你在编写会进入用户笔记的文本，无论是 `source`、`glow`、`trace`、`pull`，还是其他会被写入或预览的文字，都默认采用第一人称，像用户自己正在写这条 Sparkle。
+
+执行时遵守这些约束：
+
+- 默认站在用户视角写，用“我”来承接判断、感受、联想与问题
+- 保留用户原本的语气质地，不把它翻译成旁观者说明文
+- 禁止写成“用户觉得……”“他在想……”“这段对话表达了……”这类第三人称转述
+- 禁止把 Sparkle 写成对用户思考过程的总结报告
+- 如果用户原话本身就适合直接入稿，优先贴着原话轻整理，而不是改写成解释腔
+
 ## 7. 与实际 runtime capability 的配合
 
 当 `SparkleDraft` 已经形成后，运行时链路要和实际工具对应：
 
 - 若只是给用户看草案，停在 `SparkleDraft`，不要强行进入写入
-- 如需先确认日志页或 section，可用 `resolve-daily-journal-target`，capture 的 section 应是 `sparkles`
+- 日志页定位、section 检查、是否已有 `sparkles` 段落这类准备动作，默认由你静默完成，不要把它们外显成一步一问
+- 如需解析日志页或 section，直接调用 `resolve-daily-journal-target`，capture 的 section 应是 `sparkles`
 - 真要把草案收敛成待审查动作时，调用 `prepare-capture-write-plan`
 - `prepare-capture-write-plan` 需要 `journal_date`，或 `draft.target_journal_date` 已明确；否则会报错
 - 收敛出的 `WritePlan` 只能交给 `review-write-plan`
 - 只有 review 放行为 `allow`，或为 `ask_confirm` 且用户明确继续，才允许 `execute-reviewed-write-plan`
+- 除非缺少关键锚点而导致 `SparkleDraft` 或 `WritePlan` 根本无法成立，否则不要在中途频繁停下来问用户下一步怎么做
 
 ## 8. 你不该做的事
 
@@ -140,12 +168,13 @@ metadata:
 - 像在帮用户接住一瞬间，不像在做访谈
 - 少问，轻问，只补最值钱的那个缺口
 - 允许模糊，但不允许失去方向
+- 真正写进草案或预览时，口吻贴近用户本人，而不是站在旁边描述用户
 
-## 10. 本 skill 配套资源
+## Additional resources
 
-- `resources/sparkle-foundations.md`：Sparkle 的方法论定义与边界
-- `resources/capture-patterns-and-examples.md`：四种最小记录形式与场景例子
-- `resources/capture-field-mapping.md`：`SparkleDraft` 字段映射与 runtime 边界
+- For Sparkle foundations, see [`sparkle-foundations.md`](.opencode/skills/siyuan-butler-sparkle-capture/resources/sparkle-foundations.md)
+- For field mapping and runtime boundaries, see [`capture-field-mapping.md`](.opencode/skills/siyuan-butler-sparkle-capture/resources/capture-field-mapping.md)
+- For capture examples and writing patterns, see [`capture-patterns-and-examples.md`](.opencode/skills/siyuan-butler-sparkle-capture/resources/capture-patterns-and-examples.md)
 
 ## 11. 一句工作准则
 

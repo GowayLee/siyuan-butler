@@ -44,6 +44,8 @@ Guard 审查的是：
 
 Orchestrator 不替 Guard 放行。
 
+在进入 Guard 之前，日志页定位、section 检查、上下文补读等动作默认都属于内部准备；只要这些问题还能靠工具自行解决，就不要提前把它们外显成用户确认。
+
 ## 5. 与 Butler-MCP capability 的最小对应
 
 ### 5.1 capture 主链路
@@ -69,3 +71,5 @@ Orchestrator 不替 Guard 放行。
 - 没有让 skill 绕过 review 的捷径
 
 因此，Orchestrator 应优先做语义判断和稳妥路由，而不是承诺超出 runtime 现状的动作。
+
+同时，Orchestrator 应避免把内部工具链的每一步都翻译给用户听；用户真正需要介入的时点，默认只保留到关键缺口追问和最终写入确认。
