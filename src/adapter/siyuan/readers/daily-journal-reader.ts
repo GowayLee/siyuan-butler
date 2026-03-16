@@ -5,7 +5,10 @@ import type {
 import { hasText } from "../../../domain/support/helpers.js";
 import type { SiyuanButlerAdapterConfig } from "../config.js";
 import type { SiyuanClient } from "../client.js";
-import { extractHeadingLabel, normalizeSectionLabel } from "../codecs/markdown-codec.js";
+import {
+  extractHeadingLabel,
+  normalizeSectionLabel,
+} from "../codecs/markdown-codec.js";
 import { buildDailyNoteHPath } from "../support/journal-path.js";
 
 function createMissingSection(
@@ -28,7 +31,8 @@ function matchSection(
   const matched = headings.find(
     (heading) =>
       hasText(heading.label) &&
-      normalizeSectionLabel(heading.label) === normalizeSectionLabel(expectedLabel),
+      normalizeSectionLabel(heading.label) ===
+        normalizeSectionLabel(expectedLabel),
   );
 
   if (matched === undefined || !hasText(matched.label)) {
@@ -50,7 +54,7 @@ export async function readDailyJournal(
   journal_date: string,
 ): Promise<DailyJournalReadModel> {
   const pageIds = await client.getIDsByHPath(
-    buildDailyNoteHPath(config.daily_note_hpath_prefix, journal_date),
+    buildDailyNoteHPath(config.daily_note_hpath_template, journal_date),
     config.notebook,
   );
   const pageId = pageIds[0];
@@ -61,7 +65,10 @@ export async function readDailyJournal(
       notebook_id: config.notebook,
       notebook_hint: config.notebook,
       page_exists: false,
-      sparkles_section: createMissingSection("sparkles", config.sparkles_section_label),
+      sparkles_section: createMissingSection(
+        "sparkles",
+        config.sparkles_section_label,
+      ),
       journal_body_section: createMissingSection(
         "journal-body",
         config.journal_body_section_label,
@@ -75,7 +82,9 @@ export async function readDailyJournal(
       .filter((block) => block.type === "h")
       .map(async (block) => ({
         id: block.id,
-        label: extractHeadingLabel((await client.getBlockKramdown(block.id)).kramdown),
+        label: extractHeadingLabel(
+          (await client.getBlockKramdown(block.id)).kramdown,
+        ),
       })),
   );
 

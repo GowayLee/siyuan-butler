@@ -17,9 +17,16 @@
 - `SIYUAN_URL` 或 `SIYUAN_HOST` + `SIYUAN_PORT`
 - `SIYUAN_TOKEN` 可选
 - `SIYUAN_NOTEBOOK` 必填
-- `SIYUAN_DAILY_NOTE_HPATH_PREFIX` 默认为 `/daily`
+- `SIYUAN_DAILY_NOTE_HPATH_TEMPLATE` 默认为 `/{{year}}/{{month}}/{{date}}`
 - `SIYUAN_SPARKLES_SECTION_LABEL` 默认为 `Sparkles`
 - `SIYUAN_JOURNAL_BODY_SECTION_LABEL` 默认为 `Journal Body`
+
+当前支持的日志路径日期变量：
+
+- `{{year}}` -> `2026`
+- `{{month}}` -> `03`
+- `{{day}}` -> `16`
+- `{{date}}` -> `2026-03-16`
 
 当前实现的结构假设也保持显式：
 

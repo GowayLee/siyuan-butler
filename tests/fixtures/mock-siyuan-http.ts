@@ -22,7 +22,7 @@ export interface RecordedSiyuanRequest {
 const DEFAULT_ENV: NodeJS.ProcessEnv = {
   SIYUAN_URL: "http://mock-siyuan.local",
   SIYUAN_NOTEBOOK: "daily-notebook",
-  SIYUAN_DAILY_NOTE_HPATH_PREFIX: "/daily",
+  SIYUAN_DAILY_NOTE_HPATH_TEMPLATE: "/{{year}}/{{month}}/{{date}}",
   SIYUAN_SPARKLES_SECTION_LABEL: "Sparkles",
   SIYUAN_JOURNAL_BODY_SECTION_LABEL: "Journal Body",
 };

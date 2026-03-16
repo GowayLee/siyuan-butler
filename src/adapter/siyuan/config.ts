@@ -7,7 +7,7 @@ export interface SiyuanConnectionConfig {
 
 export interface SiyuanButlerAdapterConfig extends SiyuanConnectionConfig {
   notebook: string;
-  daily_note_hpath_prefix: string;
+  daily_note_hpath_template: string;
   sparkles_section_label: string;
   journal_body_section_label: string;
   sparkle_status_attr: string;
@@ -17,7 +17,7 @@ export interface SiyuanButlerAdapterConfig extends SiyuanConnectionConfig {
   sparkle_entry_ref_attr: string;
 }
 
-const DEFAULT_DAILY_NOTE_HPATH_PREFIX = "/daily";
+const DEFAULT_DAILY_NOTE_HPATH_TEMPLATE = "/{{year}}/{{month}}/{{date}}";
 const DEFAULT_SPARKLES_SECTION_LABEL = "Sparkles";
 const DEFAULT_JOURNAL_BODY_SECTION_LABEL = "Journal Body";
 
@@ -25,8 +25,8 @@ function trimTrailingSlash(value: string): string {
   return value.endsWith("/") ? value.slice(0, -1) : value;
 }
 
-function normalizeDailyNoteHPathPrefix(value: string | undefined): string {
-  const normalized = normalizeText(value) ?? DEFAULT_DAILY_NOTE_HPATH_PREFIX;
+function normalizeDailyNoteHPathTemplate(value: string | undefined): string {
+  const normalized = normalizeText(value) ?? DEFAULT_DAILY_NOTE_HPATH_TEMPLATE;
 
   if (normalized === "/") {
     return normalized;
@@ -64,14 +64,16 @@ export function loadSiyuanButlerAdapterConfigFromEnv(
   const notebook = normalizeText(env.SIYUAN_NOTEBOOK);
 
   if (!hasText(notebook)) {
-    throw new Error("缺少 SIYUAN_NOTEBOOK，Butler adapter 不能隐式推断笔记本目标。");
+    throw new Error(
+      "缺少 SIYUAN_NOTEBOOK，Butler adapter 不能隐式推断笔记本目标。",
+    );
   }
 
   return {
     ...connection,
     notebook,
-    daily_note_hpath_prefix: normalizeDailyNoteHPathPrefix(
-      env.SIYUAN_DAILY_NOTE_HPATH_PREFIX,
+    daily_note_hpath_template: normalizeDailyNoteHPathTemplate(
+      env.SIYUAN_DAILY_NOTE_HPATH_TEMPLATE,
     ),
     sparkles_section_label:
       normalizeText(env.SIYUAN_SPARKLES_SECTION_LABEL) ??

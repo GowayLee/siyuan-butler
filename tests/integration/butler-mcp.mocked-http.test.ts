@@ -12,6 +12,7 @@ import type { ExpectedSiyuanRequest } from "../fixtures/mock-siyuan-http.js";
 import { createMockButlerContext } from "../fixtures/mock-siyuan-http.js";
 
 const JOURNAL_DATE = "2026-03-16";
+const DAILY_NOTE_PATH = "/2026/03/2026-03-16";
 const PAGE_ID = "page-20260316";
 const SPARKLES_SECTION_ID = "heading-sparkles";
 const JOURNAL_BODY_SECTION_ID = "heading-journal-body";
@@ -21,7 +22,7 @@ function createDailyJournalRoutes(): ExpectedSiyuanRequest[] {
     {
       path: "/api/filetree/getIDsByHPath",
       body: {
-        path: "/daily/2026-03-16",
+        path: DAILY_NOTE_PATH,
         notebook: "daily-notebook",
       },
       data: [PAGE_ID],
@@ -53,7 +54,7 @@ function createMissingDailyJournalRoutes(): ExpectedSiyuanRequest[] {
     {
       path: "/api/filetree/getIDsByHPath",
       body: {
-        path: "/daily/2026-03-16",
+        path: DAILY_NOTE_PATH,
         notebook: "daily-notebook",
       },
       data: [],
@@ -66,7 +67,7 @@ function createJournalRoutesWithoutSparklesSection(): ExpectedSiyuanRequest[] {
     {
       path: "/api/filetree/getIDsByHPath",
       body: {
-        path: "/daily/2026-03-16",
+        path: DAILY_NOTE_PATH,
         notebook: "daily-notebook",
       },
       data: [PAGE_ID],
@@ -286,7 +287,7 @@ test("read-sparkle-record merges mocked attrs, preview markdown, and hpath metad
     {
       path: "/api/filetree/getHPathByID",
       body: { id: "sparkle-001" },
-      data: "/daily/2026-03-16",
+      data: DAILY_NOTE_PATH,
     },
   ]);
 
@@ -331,7 +332,7 @@ test("read-sparkle-record returns undefined when source and glow cannot be recov
     {
       path: "/api/filetree/getHPathByID",
       body: { id: "sparkle-empty" },
-      data: "/daily/2026-03-16",
+      data: DAILY_NOTE_PATH,
     },
   ]);
 
@@ -568,7 +569,7 @@ test("mocked SiYuan API failures surface through Butler MCP handlers", async () 
     {
       path: "/api/filetree/getIDsByHPath",
       body: {
-        path: "/daily/2026-03-16",
+        path: DAILY_NOTE_PATH,
         notebook: "daily-notebook",
       },
       payload: {
@@ -596,7 +597,7 @@ test("mocked HTTP status failures surface through Butler MCP handlers", async ()
     {
       path: "/api/filetree/getIDsByHPath",
       body: {
-        path: "/daily/2026-03-16",
+        path: DAILY_NOTE_PATH,
         notebook: "daily-notebook",
       },
       status: 503,
@@ -617,5 +618,32 @@ test("mocked HTTP status failures surface through Butler MCP handlers", async ()
     /SiYuan API \/api\/filetree\/getIDsByHPath 返回 HTTP 503。/,
   );
 
+  mock.assertAllRequestsHandled();
+});
+
+test("daily note path templates expand year month day and date variables", async () => {
+  const mock = createMockButlerContext(
+    [
+      {
+        path: "/api/filetree/getIDsByHPath",
+        body: {
+          path: "/journals/2026/03/16/2026-03-16",
+          notebook: "daily-notebook",
+        },
+        data: [],
+      },
+    ],
+    {
+      SIYUAN_DAILY_NOTE_HPATH_TEMPLATE:
+        "/journals/{{year}}/{{month}}/{{day}}/{{date}}",
+    },
+  );
+
+  const result = await handleResolveDailyJournalTarget(mock.context, {
+    journal_date: JOURNAL_DATE,
+    section_kind: "sparkles",
+  });
+
+  assert.equal(result.resolution.journal.page_exists, false);
   mock.assertAllRequestsHandled();
 });
