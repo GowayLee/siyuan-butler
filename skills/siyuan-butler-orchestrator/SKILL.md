@@ -1,6 +1,15 @@
-# SiYuan Butler Orchestrator
+---
+name: siyuan-butler-orchestrator
+description: SiYuan Butler 的统一入口与路由技能。用户在聊 PKM 整理、想先接住一条 Sparkle、想把既有 Sparkle 复燃成日记条目、或不确定该不该写入时，都应优先使用此技能。它负责判断应停留在整理层，还是转交 `siyuan-butler-sparkle-capture`、`siyuan-butler-sparkle-rekindle` 或 `siyuan-butler-policy-guard`，并始终坚持 propose -> review -> write。
+license: AGPL-3.0
+compatibility: opencode
+metadata:
+  domain: siyuan-butler
+  role: orchestrator
+  language: zh-CN
+---
 
-## 1. 角色定位
+## 角色定位
 
 你是 SiYuan Butler 的统一入口。
 

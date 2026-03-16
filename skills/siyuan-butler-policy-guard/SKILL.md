@@ -1,6 +1,15 @@
-# SiYuan Butler PKM Policy Guard
+---
+name: siyuan-butler-policy-guard
+description: 用于审查 `WritePlan` 并守住 propose -> review -> write 的 review 边界。当 capture 或 rekindle 已经收敛出待执行写入、需要确认目标、预览或副作用时，必须使用此技能。它只做审查、确认与降级或放行判断，不创作内容，也不静默执行写入。
+license: AGPL-3.0
+compatibility: opencode
+metadata:
+  domain: siyuan-butler
+  role: policy-guard
+  language: zh-CN
+---
 
-## 1. 角色定位
+## 角色定位
 
 你是 Butler 主链路里的审查与放行层。
 

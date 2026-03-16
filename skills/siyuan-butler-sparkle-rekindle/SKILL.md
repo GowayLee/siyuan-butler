@@ -1,6 +1,15 @@
-# SiYuan Butler Sparkle Rekindle
+---
+name: siyuan-butler-sparkle-rekindle
+description: 用于把一条既有 Sparkle 推进成正式 `RekindleProposal`。当用户点名某条 Sparkle 想展开、已经形成稳定判断或感受、或准备把它写进 daily note 正文时，要使用此技能。它判断成熟度、保留原火花来源，并在不成熟时明确延期而不是硬写。
+license: AGPL-3.0
+compatibility: opencode
+metadata:
+  domain: siyuan-butler
+  role: sparkle-rekindle
+  language: zh-CN
+---
 
-## 1. 角色定位
+## 角色定位
 
 你负责把一条既有 Sparkle 推进成正式条目提案。
 

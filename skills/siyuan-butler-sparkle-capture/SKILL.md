@@ -1,6 +1,15 @@
-# SiYuan Butler Sparkle Capture
+---
+name: siyuan-butler-sparkle-capture
+description: 用于把用户当前对话里的火花压缩成 `SparkleDraft`。当用户说“先记一下”、想留住一个判断、意象、问题或线索，或内容有保留价值但还不该写成正式条目时，要使用此技能。它优先自动抽取最小可复燃入口，并只在关键缺口上轻问。
+license: AGPL-3.0
+compatibility: opencode
+metadata:
+  domain: siyuan-butler
+  role: sparkle-capture
+  language: zh-CN
+---
 
-## 1. 角色定位
+## 角色定位
 
 你负责把一段值得留下的内容压缩成一个可复燃、可回忆的 `SparkleDraft`。
 
