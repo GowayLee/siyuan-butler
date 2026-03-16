@@ -11,7 +11,7 @@
 
 这份文档是架构草案，描述的是当前推荐的项目组织方式与分层边界，不代表这些目录中的实现已经完成。
 
-另一个明确边界是：`docs/Butler-PKM/` 目录只用于存放 PKM 理论与方法论材料，不承担项目结构或运行时设计文档。
+另一个明确边界是：`docs/Butler-PKM/` 目录只用于存放 PKM 理论与方法论材料，不承担项目结构或运行时设计文档；这些项目设计文档应集中放在 `docs/Butler-Design/`。
 
 ## 2. 当前确认下来的总体定位
 
@@ -97,8 +97,10 @@ SiYuan Butler 应被实现为两部分：
 .
 |- docs/
 |  |- SiYuan-Butler-skill-spec-V0.md
-|  |- Sparkle-Skill-Upstream-Design.md
-|  |- Project-Structure-and-Runtime-Plan.md
+|  |- Butler-Design/
+|  |  |- Sparkle-Skill-Upstream-Design.md
+|  |  |- Butler-Object-Contracts-Draft.md
+|  |  `- Project-Structure-and-Runtime-Plan.md
 |  `- Butler-PKM/
 |     `- Sparkle-model.md
 |- skills/
@@ -128,8 +130,10 @@ SiYuan Butler 应被实现为两部分：
 这里承载产品规格、上游设计与项目架构文档。
 
 - `SiYuan-Butler-skill-spec-V0.md` 是产品源头文档
-- `Sparkle-Skill-Upstream-Design.md` 用于细化 Sparkle 主链路的 skill 边界、状态流转与对象契约
-- `Project-Structure-and-Runtime-Plan.md` 用于说明 `skill suite + MCP runtime` 的工程分层方向
+- `Butler-Design/` 用于集中承载项目设计文档
+- `Butler-Design/Sparkle-Skill-Upstream-Design.md` 用于细化 Sparkle 主链路的 skill 边界、状态流转与对象契约
+- `Butler-Design/Butler-Object-Contracts-Draft.md` 用于细化五个核心对象的中文契约草案
+- `Butler-Design/Project-Structure-and-Runtime-Plan.md` 用于说明 `skill suite + MCP runtime` 的工程分层方向
 
 与之相对，`docs/Butler-PKM/` 只放 PKM 理论，不放项目结构设计。
 
@@ -251,7 +255,7 @@ Butler MCP 不应成为另一个 `siyuan-mcp-server.ts`。
 在这份结构下，后续更合理的开发顺序是：
 
 1. 明确 skill 套件边界与工作流状态切换
-   - 参考 `docs/Sparkle-Skill-Upstream-Design.md`
+   - 参考 `docs/Butler-Design/Sparkle-Skill-Upstream-Design.md`
 2. 固化领域对象与对象契约
 3. 实现 Butler MCP Server 的运行时骨架
 4. 再设计并实现具体 MCP 工具

@@ -146,10 +146,12 @@ V0 采用多 skill 架构，但用户始终通过统一的“笔记管家”入�
 - 读取目标 Sparkle 及上下文
 - 判断该 Sparkle 是否已经成熟到值得复燃
 - 必要时通过少量追问补足关键缺口
-- 生成日志条目提案
-- 在写入后回写 Sparkle 状态
+- 生成正式条目提案
+- 在不适合正式写入时给出延期、保留或降级建议
 
 它的重点不在“写长”，而在“判断这条内容是否值得成为正式记录”。
+
+它的产物应是 `RekindleProposal`，而不是最终写入结果。
 
 ### 4.4 Skill D：PKM Policy Guard
 
@@ -229,85 +231,144 @@ V0 的主 skill 必须体现“笔记管家”而不是“指令机器人”的�
 
 为了保证 skill 之间能稳定协作，V0 应建立清晰的结构化对象模型。
 
+这里的对象模型是工作流对象，不是底层存储 schema，也不是 MCP 工具入参设计。
+
+更细的字段草案可参考 `docs/Butler-Design/Butler-Object-Contracts-Draft.md`；本节保留 V0 规格层必须稳定的核心语义。
+
 ### 6.1 SparkleDraft
 
 用于表示 Capture 阶段生成的 Sparkle 草案。
+
+它不是完整笔记，也不是文本摘要，而是一个“最小可回忆单元”与“重返入口”。
+
+一个成立的 `SparkleDraft`，至少要保住：
+
+- 一个触发物
+- 一个方向感
 
 建议字段：
 
 - id
 - created_at
 - source_type
-- spark
+- sparkle_kind
+- source
+- glow
+- trace
+- pull
+- source_excerpt
 - context
 - why_it_matters
 - next_hint
 - status
 - target_journal_date
-- source_excerpt
+- capture_mode
+- write_intent
 
 其中：
 
-- spark 是核心火花本体
-- context 是当时语境
-- why_it_matters 可选
-- next_hint 可选
-- status 初始通常为 draft 或 captured
+- `source` 与 `glow` 是核心槽位；前者回答“它从哪里亮起来”，后者回答“这里亮的是什么”
+- `trace` 与 `pull` 是可选增强槽位，用于保留辅助线索与后续牵引方向
+- `sparkle_kind` 用于区分感受型、认知型或混合型 sparkle
+- `context` 是帮助重返的轻量语境，不是背景说明大全
+- `why_it_matters`、`next_hint` 可选，不应退化成必填解释题
+- `status` 初始通常为 `draft` 或 `captured`
+
+`SparkleDraft` 的重点是可复燃，而不是格式完整。只要未来的自己能借它回到那个感受、判断、联想或思路，它就成立。
 
 ### 6.2 RekindleRequest
 
 用于表示进入复燃阶段时的输入对象。
 
+它的作用不是把原 Sparkle 抹平成摘要，而是把“为什么现在要继续碰这条 Sparkle”组织成稳定请求。
+
 建议字段：
 
 - sparkle_id
-- sparkle_content
+- sparkle_snapshot
+- trigger
 - related_context
 - user_goal
 - desired_depth
+- focus_question
+- target_journal_date
+
+其中：
+
+- `sparkle_snapshot` 至少要保住原 Sparkle 的 `source`、`glow` 与必要线索
+- `trigger` 用于说明这次为什么进入复燃，例如用户点名、对话自然成熟、或 Butler 建议展开
+- `user_goal` 表示这次复燃想得到什么，不等于最终一定写入
+- `desired_depth` 用于控制展开深度，不用于逼迫内容变长
 
 ### 6.3 RekindleProposal
 
 用于表示复燃 skill 生成的正式条目提案。
 
+它的核心不是“扩写”，而是“给出一个值得写入正式时间线的提案”。
+
 建议字段：
 
 - source_sparkle_id
 - rekindle_mode
+- maturity
 - entry_title
 - entry_body
 - entry_reason
 - write_target
+- summary_line
+- open_questions
 - backref_needed
 
 其中：
 
-- rekindle_mode 可取 brief / full / postpone
-- backref_needed 用于决定是否需要回写 Sparkle 状态
+- `rekindle_mode` 可取 `brief` / `full` / `postpone`
+- `maturity` 用于表达当前成熟度判断
+- `entry_reason` 用于说明为什么现在值得写，而不是继续放着
+- `summary_line`、`open_questions` 可用于保留轻量概括与未阻断提案的问题
+- `backref_needed` 用于决定后续是否需要回写 Sparkle 状态或关联信息，但不等于已被允许执行
 
 ### 6.4 WritePlan
 
 用于表示待执行的写入计划。
 
+它是语义提案进入审查层时的受控动作对象，重点是让这次写入可以被预览、被解释、被确认。
+
 建议字段：
 
+- plan_id
 - operation_type
+- origin
 - target_page
 - target_section
 - content_preview
 - side_effects
 - backwrite_actions
+- needs_confirmation
+- blocked_by
+
+其中：
+
+- `operation_type` 用于区分追加 Sparkle、追加正式条目、状态回写等动作
+- `origin` 用于标记此计划来自 Capture 还是 Rekindle
+- `side_effects` 不能省略；即使没有副作用，也应明确写出
+- `backwrite_actions` 用于描述附带回写动作
+- `needs_confirmation` 与 `blocked_by` 用于帮助 Policy Guard 判断能否继续
 
 ### 6.5 ReviewResult
 
 用于表示 Policy Guard 的审核结论。
 
+它决定这次流程是继续执行、先确认、降级成非写入结果，还是直接拒绝。
+
 建议字段：
 
 - decision
 - reason
+- review_summary
 - user_prompt
 - final_write_plan
+- downgrade_to
+- reject_code
 
 其中 decision 建议包括：
 
@@ -315,6 +376,12 @@ V0 的主 skill 必须体现“笔记管家”而不是“指令机器人”的�
 - ask_confirm
 - downgrade
 - reject
+
+并应满足：
+
+- `allow` 与 `ask_confirm` 应对应一份清晰的 `final_write_plan`
+- `downgrade` 应说明这次保留下来的非写入结果是什么
+- `reject` 应明确告诉上游为什么不能继续
 
 ---
 
@@ -368,10 +435,11 @@ V0 的上层 skill 只应依赖一组较小且稳定的语义工具白名单。
 2. Orchestrator 判断这段内容值得进入 Sparkle Capture
 3. Sparkle Capture 自动抽取可用信息
 4. 如存在关键缺口，进行最小追问
-5. 生成 SparkleDraft
-6. Policy Guard 检查是否适合写入
-7. 若允许，则写入今日日志的 Sparkles 节
-8. 返回保存结果与简短说明
+5. 生成 `SparkleDraft`
+6. 如存在保存意图，将 `SparkleDraft` 收敛为 `WritePlan`
+7. Policy Guard 基于 `WritePlan` 形成 `ReviewResult`
+8. 若 `ReviewResult` 为 `allow`，或 `ask_confirm` 后获得确认，则执行写入
+9. 返回保存结果与简短说明
 
 该流程的目标是降低记录摩擦，而不是追求一次性写得完整。
 
@@ -383,13 +451,13 @@ V0 的上层 skill 只应依赖一组较小且稳定的语义工具白名单。
 
 1. 用户主动表示想展开某个 Sparkle，或当前对话显示某条 Sparkle 已经成熟
 2. Orchestrator 判断进入 Sparkle Rekindle
-3. Rekindle skill 读取目标 Sparkle 与上下文
+3. Rekindle skill 读取目标 Sparkle 与上下文，并组织成 `RekindleRequest`
 4. 判断该 Sparkle 是否已成熟到值得写成正式条目
 5. 如有必要，进行少量追问
-6. 生成 RekindleProposal
-7. Policy Guard 生成预览并判断是否需要确认
-8. 在获得允许后，写入日志正文
-9. 回写原 Sparkle 的状态为 rekindled
+6. 生成 `RekindleProposal`
+7. 将 `RekindleProposal` 收敛为 `WritePlan`
+8. Policy Guard 对 `WritePlan` 生成 `ReviewResult`
+9. 在获得允许后，写入日志正文，并执行必要的状态回写
 10. 返回写入结果与对应关系说明
 
 该流程的重点是“判断内容成熟度”，而不是机械地把 Sparkle 拉长成段落。
@@ -435,8 +503,10 @@ V0 的 skill 之间应通过结构化对象通信，而不是通过松散的自�
 关系如下：
 
 - Orchestrator 决定路由，但不负责直接写入
-- Capture 与 Rekindle 负责生成结构化提案
-- Policy Guard 对提案进行审核与放行
+- Capture 负责生成 `SparkleDraft`
+- Rekindle 负责生成 `RekindleRequest` 与 `RekindleProposal`
+- `SparkleDraft` 与 `RekindleProposal` 在进入审查前会被收敛为 `WritePlan`
+- Policy Guard 对 `WritePlan` 进行审核，并返回 `ReviewResult`
 - MCP / API adapter 仅执行被批准的动作
 
 这样可以保证未来新增 skill 时，不会破坏现有主链路。
@@ -465,22 +535,22 @@ V0 虽然只实现两个核心业务 skill，但应提前建立共享资源层�
 
 ```text
 skills/
-  pkm-orchestrator/
+  siyuan-butler-orchestrator/
     SKILL.md
     examples/
     resources/
 
-  sparkle-capture/
+  siyuan-butler-sparkle-capture/
     SKILL.md
     examples/
     resources/
 
-  sparkle-rekindle/
+  siyuan-butler-sparkle-rekindle/
     SKILL.md
     examples/
     resources/
 
-  pkm-policy-guard/
+  siyuan-butler-policy-guard/
     SKILL.md
     examples/
     resources/
@@ -532,4 +602,3 @@ V0 的重点不在目录形式本身，而在于每个 skill 都有清晰、稳�
 - 由思源笔记承担最终知识存储
 
 在该架构下，系统既可以快速开始使用，又能为未来版本留下清晰的扩展路径。
-

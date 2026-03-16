@@ -4,7 +4,7 @@
 
 - `docs/Butler-PKM/` holds PKM-methodology notes only.
 - Files here clarify the underlying note-taking method and terminology, but they do not override the product contract defined in `docs/SiYuan-Butler-skill-spec-V0.md`.
-- Project design and runtime architecture belong in `docs/`, not in this subtree.
+- Project design and runtime architecture belong in `docs/Butler-Design/`, not in this subtree.
 
 ## STRUCTURE
 
@@ -13,8 +13,8 @@
 ## WHERE TO LOOK
 
 - Sparkle concept and capture philosophy: `docs/Butler-PKM/Sparkle-model.md`
-- Sparkle skill/workflow upstream design: `docs/Sparkle-Skill-Upstream-Design.md`
-- Repo structure, runtime layering, and packaging direction: `docs/Project-Structure-and-Runtime-Plan.md`
+- Sparkle skill/workflow upstream design: `docs/Butler-Design/Sparkle-Skill-Upstream-Design.md`
+- Repo structure, runtime layering, and packaging direction: `docs/Butler-Design/Project-Structure-and-Runtime-Plan.md`
 - Product-level workflow and object model: `docs/SiYuan-Butler-skill-spec-V0.md`
 
 ## CONVENTIONS
