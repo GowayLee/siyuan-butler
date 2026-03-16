@@ -5,9 +5,14 @@
   "type": "module",
   "scripts": {
     "build": "tsc",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "start:mcp": "node dist/butler-mcp/main.js"
   },
   "devDependencies": {
+    "@types/node": "^25.5.0",
     "typescript": "^5.9.2"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.27.1"
   }
 }

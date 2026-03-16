@@ -24,7 +24,10 @@ export type CaptureMode = "auto-extract" | "minimal-followup" | "user-directed";
 
 export type CaptureConfidence = "low" | "medium" | "high";
 
-export type WriteIntent = "proposal_only" | "suggest_save" | "user_requested_save";
+export type WriteIntent =
+  | "proposal_only"
+  | "suggest_save"
+  | "user_requested_save";
 
 export type RekindleTrigger =
   | "user-explicit"
@@ -115,7 +118,11 @@ export interface ContentPreview {
 }
 
 export interface SideEffect {
-  kind: "none" | "status-backwrite" | "reference-backwrite" | "multi-block-write";
+  kind:
+    | "none"
+    | "status-backwrite"
+    | "reference-backwrite"
+    | "multi-block-write";
   note: string;
 }
 
@@ -132,7 +139,11 @@ export interface SourceRef {
 }
 
 export interface ReviewCheck {
-  check: "target-clear" | "preview-clear" | "semantic-fit" | "side-effects-acceptable";
+  check:
+    | "target-clear"
+    | "preview-clear"
+    | "semantic-fit"
+    | "side-effects-acceptable";
   result: "pass" | "warn" | "fail";
   note?: string;
 }

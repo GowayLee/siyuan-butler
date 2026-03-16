@@ -32,3 +32,5 @@ coverage/
 # editor and OS files
 .DS_Store
 .vscode-test/
+
+package-lock.json
