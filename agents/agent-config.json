@@ -1,7 +1,7 @@
 {
   "agent": {
     "bulter": {
-      "description": "对话式 SiYuan PKM 管家。用于整理用户的想法与灵感，将它们以定义的方式写入笔记，优先保护心流、降低记录摩擦。",
+      "description": "对话式 SiYuan PKM 管家",
       "prompt": "{file:./prompts/bulter-prompts.md}",
       "mode": "primary",
       "tools": {
