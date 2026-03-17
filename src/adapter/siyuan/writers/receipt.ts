@@ -5,6 +5,11 @@ export function buildAffectedObjects(
   plan: WritePlan,
   insertedIds: string[],
   backwriteIds: string[],
+  options: {
+    section_id?: string;
+    section_note?: string;
+    extra_objects?: AffectedObjectRef[];
+  } = {},
 ): AffectedObjectRef[] {
   const insertedObjects: AffectedObjectRef[] = insertedIds.map((id) => ({
     object_type:
@@ -25,9 +30,13 @@ export function buildAffectedObjects(
     },
     {
       object_type: "section",
-      object_id: plan.target_section.section_id,
-      note: plan.target_section.section_label ?? plan.target_section.section_kind,
+      object_id: options.section_id ?? plan.target_section.section_id,
+      note:
+        options.section_note ??
+        plan.target_section.section_label ??
+        plan.target_section.section_kind,
     },
+    ...(options.extra_objects ?? []),
     ...insertedObjects,
     ...backwriteObjects,
   ];

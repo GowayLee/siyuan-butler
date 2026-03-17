@@ -35,13 +35,43 @@ export function resolveDailyJournalTarget(
 ): ResolvedDailyJournalTarget {
   const section = selectJournalSection(input.journal, input.section_kind);
   const blockedBy: string[] = [];
+  const canRepairMissingSparklesSection =
+    input.section_kind === "sparkles" && input.journal.page_exists;
 
   if (!input.journal.page_exists) {
     blockedBy.push(`目标日志页 ${input.journal.journal_date} 尚不存在。`);
   }
 
-  if (section === undefined || !section.exists) {
-    blockedBy.push(`目标章节 ${input.section_kind} 尚不存在，暂不能形成稳定写入目标。`);
+  if (
+    (section === undefined || !section.exists) &&
+    !canRepairMissingSparklesSection
+  ) {
+    blockedBy.push(
+      `目标章节 ${input.section_kind} 尚不存在，暂不能形成稳定写入目标。`,
+    );
+  }
+
+  if (
+    section !== undefined &&
+    !section.exists &&
+    canRepairMissingSparklesSection
+  ) {
+    return {
+      target_page: {
+        page_kind: "daily-note",
+        journal_date: input.journal.journal_date,
+        page_id: input.journal.page_id,
+        notebook_hint: input.journal.notebook_hint ?? input.journal.notebook_id,
+      },
+      target_section: {
+        section_kind: input.section_kind,
+        section_id: undefined,
+        section_label:
+          normalizeText(input.preferred_section_label) ?? section.section_label,
+        insertion_mode: "append",
+      },
+      blocked_by: blockedBy,
+    };
   }
 
   if (section !== undefined && !section.append_supported) {
@@ -75,10 +105,18 @@ export function resolveTargetFromWriteHint(
     journal: {
       ...journal,
       journal_date: hintedJournalDate,
-      page_id: hintedJournalDate === journal.journal_date ? journal.page_id : undefined,
-      page_exists: hintedJournalDate === journal.journal_date ? journal.page_exists : false,
+      page_id:
+        hintedJournalDate === journal.journal_date
+          ? journal.page_id
+          : undefined,
+      page_exists:
+        hintedJournalDate === journal.journal_date
+          ? journal.page_exists
+          : false,
       sparkles_section:
-        hintedJournalDate === journal.journal_date ? journal.sparkles_section : undefined,
+        hintedJournalDate === journal.journal_date
+          ? journal.sparkles_section
+          : undefined,
       journal_body_section:
         hintedJournalDate === journal.journal_date
           ? journal.journal_body_section
@@ -88,7 +126,10 @@ export function resolveTargetFromWriteHint(
     preferred_section_label: hint.section_label,
   });
 
-  if (hint.journal_date !== undefined && hint.journal_date !== journal.journal_date) {
+  if (
+    hint.journal_date !== undefined &&
+    hint.journal_date !== journal.journal_date
+  ) {
     return {
       ...resolved,
       blocked_by: [

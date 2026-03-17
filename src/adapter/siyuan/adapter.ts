@@ -45,13 +45,15 @@ export class SiyuanButlerAdapter
   async executeApprovedWritePlan(
     plan: WritePlan,
   ): Promise<ControlledWriteReceipt> {
-    const parentID = this.requireAppendParent(plan);
-
     switch (plan.operation_type) {
       case "append-sparkle":
-        return executeAppendSparkle(this.client, plan, parentID);
+        return executeAppendSparkle(this.client, plan);
       case "append-journal-entry":
-        return executeAppendJournalEntry(this.client, plan, parentID);
+        return executeAppendJournalEntry(
+          this.client,
+          plan,
+          this.requireAppendParent(plan),
+        );
       default:
         throw new Error(
           `SiyuanButlerAdapter 暂不支持执行 ${plan.operation_type}。`,

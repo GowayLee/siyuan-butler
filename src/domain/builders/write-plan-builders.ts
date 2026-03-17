@@ -59,6 +59,22 @@ export function createCaptureWritePlan(
     section_label: normalizeText(options.section_label) ?? "Sparkles",
     insertion_mode: "append",
   };
+  const sectionLabel = targetSection.section_label ?? "Sparkles";
+  const needsSectionRepair = !hasText(targetSection.section_id);
+  const sideEffects = needsSectionRepair
+    ? [
+        {
+          kind: "multi-block-write" as const,
+          preview: `Append a new level-2 ${sectionLabel} heading to the daily note, mark it as sparkle flow, then append the captured Sparkle under it.`,
+        },
+      ]
+    : [
+        {
+          kind: "none" as const,
+          preview:
+            "Append the captured Sparkle into the Sparkles section only.",
+        },
+      ];
 
   return normalizeWritePlan({
     plan_id: options.plan_id,
@@ -69,12 +85,7 @@ export function createCaptureWritePlan(
       body: renderSparkleDraftPreview(draft),
       preview_format: "markdown",
     },
-    side_effects: [
-      {
-        kind: "none",
-        preview: "Append the captured Sparkle into the Sparkles section only.",
-      },
-    ],
+    side_effects: sideEffects,
     origin: "capture",
     risk_level: "low",
     needs_confirmation: false,
