@@ -5,13 +5,15 @@
   "type": "module",
   "scripts": {
     "build": "tsc",
+    "install:opencode": "NODE_NO_WARNINGS=1 ts-node --esm Scripts/install_opencode.ts",
     "test": "tsc -p tsconfig.tests.json && node --test .test-dist/tests/**/*.test.js",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit && tsc -p tsconfig.scripts.json",
     "start:mcp": "node dist/butler-mcp/main.js"
   },
   "devDependencies": {
     "@types/node": "^25.5.0",
-    "typescript": "^5.9.2"
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.27.1",
