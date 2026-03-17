@@ -11,12 +11,12 @@
 - `index.ts` - root export narrowed to `butler-mcp/`; do not treat `src/` as a flat barrel for `application/`, `domain/`, and `adapter/`.
 - `butler-mcp/` - runtime main axis.
   - `runtime/` - runtime context creation and env-based bootstrap.
-  - `registry/` - capability whitelist registration and read/write phase assembly.
-  - `capabilities/<capability-id>/` - each capability owns its `schema.ts`, `handler.ts`, and `presenter.ts`.
+  - `registry.ts` - capability whitelist registration and runtime assembly.
+  - `capabilities/<capability-id>/tool.ts` - each capability owns its MCP schema, handler, and presenter glue in one file.
   - `server.ts` / `main.ts` - MCP server creation and stdio startup.
 - `application/` - capability-facing application layer.
-  - `services/` - entrypoints called by MCP handlers.
-  - `workflows/` - use-case orchestration split by `capture/`, `rekindle/`, `review/`, and `shared/`.
+  - `use-cases/` - capability-facing orchestration such as target resolution, capture-plan prep, review, and controlled write.
+  - `shared/` - pure application-side helpers such as target resolution.
 - `domain/` - stable Butler object model and policy rules.
   - `value-objects/` - shared domain references and primitive semantic types.
   - `support/` - small pure helpers used inside the domain.
@@ -24,9 +24,8 @@
   - `builders/` - `WritePlan` construction logic.
   - `policies/` - `Policy Guard` and related review decisions.
 - `adapter/` - controlled integration boundary for SiYuan-facing read/write work.
-  - `ports/` - read/write contracts such as `ButlerReadModelPort` and `ReviewAwareWritePort`.
-  - `models/` - stable read-model and receipt types.
-  - `resolvers/` - target resolution logic from journal context to Butler refs.
+  - `contracts.ts` - read/write contracts such as `ButlerReadModelPort` and `ButlerWritePort`.
+  - `read-models.ts` - stable read-model and receipt types.
   - `siyuan/` - thin facade plus split readers, writers, codecs, and support modules.
 - `shared/` - reserved for cross-layer shared code, but do not assume it is the center of the runtime design.
 
@@ -35,7 +34,7 @@
 - Build outward from `butler-mcp/` capability boundaries, then let `application/`, `domain/`, and `adapter/` support that runtime surface.
 - Keep the runtime semantic and policy-aware; do not let low-level endpoint names dictate public capability boundaries.
 - Preserve explicit review-before-write flow: prepare `WritePlan`, pass through `Policy Guard`, then allow controlled execution.
-- Use the stable object names from the V0 spec and keep write targets explicit through read-models and target resolvers.
+- Use the stable object names from the V0 spec and keep write targets explicit through read-models and application-side target resolution.
 - Prefer importing from the nearest subtree entry or concrete module; the root `src/index.ts` is intentionally narrow.
 
 ## ANTI-PATTERNS

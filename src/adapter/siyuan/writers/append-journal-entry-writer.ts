@@ -1,4 +1,4 @@
-import type { ControlledWriteReceipt } from "../../models/read-model.js";
+import type { ControlledWriteReceipt } from "../../read-models.js";
 import type { WritePlan } from "../../../domain/objects/write-plan.js";
 import type { SiyuanClient } from "../client.js";
 import { renderJournalEntryMarkdown } from "../codecs/markdown-codec.js";

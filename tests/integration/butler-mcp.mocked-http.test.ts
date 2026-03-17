@@ -1,11 +1,11 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { handleExecuteReviewedWritePlan } from "../../src/butler-mcp/capabilities/execute-reviewed-write-plan/handler.js";
-import { handlePrepareCaptureWritePlan } from "../../src/butler-mcp/capabilities/prepare-capture-write-plan/handler.js";
-import { handleReadJournalContext } from "../../src/butler-mcp/capabilities/read-journal-context/handler.js";
-import { handleResolveDailyJournalTarget } from "../../src/butler-mcp/capabilities/resolve-daily-journal-target/handler.js";
-import { handleReviewWritePlan } from "../../src/butler-mcp/capabilities/review-write-plan/handler.js";
+import { handleExecuteReviewedWritePlan } from "../../src/butler-mcp/capabilities/execute-reviewed-write-plan/tool.js";
+import { handlePrepareCaptureWritePlan } from "../../src/butler-mcp/capabilities/prepare-capture-write-plan/tool.js";
+import { handleReadJournalContext } from "../../src/butler-mcp/capabilities/read-journal-context/tool.js";
+import { handleResolveDailyJournalTarget } from "../../src/butler-mcp/capabilities/resolve-daily-journal-target/tool.js";
+import { handleReviewWritePlan } from "../../src/butler-mcp/capabilities/review-write-plan/tool.js";
 import type { ExpectedSiyuanRequest } from "../fixtures/mock-siyuan-http.js";
 import { createMockButlerContext } from "../fixtures/mock-siyuan-http.js";
 

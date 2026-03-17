@@ -1,10 +1,10 @@
-import type { ButlerReadModelPort } from "../../../adapter/ports/contracts.js";
-import type { DailyJournalReadModel } from "../../../adapter/models/read-model.js";
-import { resolveDailyJournalTarget } from "../../../adapter/resolvers/target-resolver.js";
-import type { TargetSectionRef } from "../../../domain/value-objects/common.js";
-import type { WritePlan } from "../../../domain/objects/write-plan.js";
+import type { ButlerReadModelPort } from "../../adapter/contracts.js";
+import type { DailyJournalReadModel } from "../../adapter/read-models.js";
+import type { TargetSectionRef } from "../../domain/value-objects/common.js";
+import type { WritePlan } from "../../domain/objects/write-plan.js";
+import { resolveDailyJournalTarget } from "../shared/target-resolution.js";
 
-export interface ResolveDailyJournalTargetCapabilityInput {
+export interface ResolveDailyJournalTargetInput {
   journal_date: string;
   section_kind: TargetSectionRef["section_kind"];
   section_label?: string;
@@ -17,9 +17,9 @@ export interface ResolveDailyJournalTargetResult {
   blocked_by: string[];
 }
 
-export async function resolveDailyJournalTargetWorkflow(
+export async function resolveDailyJournalTargetUseCase(
   reader: ButlerReadModelPort,
-  input: ResolveDailyJournalTargetCapabilityInput,
+  input: ResolveDailyJournalTargetInput,
 ): Promise<ResolveDailyJournalTargetResult> {
   const journal = await reader.readDailyJournal(input.journal_date);
   const resolved = resolveDailyJournalTarget({

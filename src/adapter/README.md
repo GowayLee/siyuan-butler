@@ -4,10 +4,9 @@
 
 当前阶段只先落最小几类内容：
 
-- `models/` 下的 read-model 类型，用来表达 daily note / Sparkle / section 的稳定读取结果
-- `resolvers/` 下的 target resolver 纯函数，用来把日志页与章节定位收敛成 `TargetPageRef` / `TargetSectionRef`
-- `ports/` 下的受控执行端口，用来承接已经通过 review 的 `WritePlan`
-- `siyuan/` 下的最小 HTTP adapter，用来把这些端口接到思源 API
+- `read-models.ts` 里的 read-model 类型，用来表达 daily note / Sparkle / section 的稳定读取结果
+- `contracts.ts` 里的受控读写合同，用来承接已经通过 review 的 `WritePlan`
+- `siyuan/` 下的最小 HTTP adapter，用来把这些合同接到思源 API
 
 这里刻意还没有：
 
@@ -23,3 +22,5 @@
 - 执行已经通过 review 的 append / backwrite
 
 它仍然不是通用 SiYuan SDK，也不是 raw MCP 面的搬运。
+
+纯目标解析逻辑现在放回 `src/application/shared/target-resolution.ts`，避免 adapter 同时承担语义编排与基础设施职责。

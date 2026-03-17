@@ -77,10 +77,10 @@
 - `skills/` is reserved for four Butler-facing skill packages that map onto the conceptual skills in the spec.
 - `src/` now centers on `butler-mcp/` as the runtime axis, with `application/`, `domain/`, and `adapter/` supporting the capability surface rather than acting as equal top-level products.
 - `src/index.ts` intentionally exports only `butler-mcp/`; internal layers should be imported from their own subtree entries or concrete modules.
-- `src/butler-mcp/` is organized around `runtime/`, `registry/`, and `capabilities/<capability-id>/`.
-- `src/application/` is organized around `services/` and `workflows/`.
+- `src/butler-mcp/` is organized around `runtime/`, `registry.ts`, and `capabilities/<capability-id>/tool.ts`.
+- `src/application/` is organized around `use-cases/` and `shared/`.
 - `src/domain/` is organized around `value-objects/`, `support/`, `objects/`, `builders/`, and `policies/`.
-- `src/adapter/` is organized around `ports/`, `models/`, `resolvers/`, and `siyuan/`.
+- `src/adapter/` is organized around `contracts.ts`, `read-models.ts`, and `siyuan/`.
 - `vendor/siyuan-mcp-server.ts` is organized by conceptual sections inside one file:
   - env/bootstrap and `api()` transport helper
   - MCP tool schema registration

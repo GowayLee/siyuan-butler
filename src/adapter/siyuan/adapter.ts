@@ -1,15 +1,10 @@
-import type {
-  ButlerReadModelPort,
-  ReviewAwareWritePort,
-} from "../ports/contracts.js";
+import type { ButlerReadModelPort, ButlerWritePort } from "../contracts.js";
 import type {
   ControlledWriteReceipt,
   DailyJournalReadModel,
   JournalContextReadModel,
-} from "../models/read-model.js";
+} from "../read-models.js";
 import { hasText } from "../../domain/support/helpers.js";
-import { reviewDecisionNeedsWritePlan } from "../../domain/objects/review-result.js";
-import type { ReviewResult } from "../../domain/objects/review-result.js";
 import type { WritePlan } from "../../domain/objects/write-plan.js";
 import type { SiyuanButlerAdapterConfig } from "./config.js";
 import { loadSiyuanButlerAdapterConfigFromEnv } from "./config.js";
@@ -20,7 +15,7 @@ import { executeAppendJournalEntry } from "./writers/append-journal-entry-writer
 import { executeAppendSparkle } from "./writers/append-sparkle-writer.js";
 
 export class SiyuanButlerAdapter
-  implements ButlerReadModelPort, ReviewAwareWritePort
+  implements ButlerReadModelPort, ButlerWritePort
 {
   readonly client: SiyuanClient;
 
@@ -59,25 +54,6 @@ export class SiyuanButlerAdapter
           `SiyuanButlerAdapter 暂不支持执行 ${plan.operation_type}。`,
         );
     }
-  }
-
-  async executeFromReview(
-    review_result: ReviewResult,
-    confirmation_granted = false,
-  ): Promise<ControlledWriteReceipt> {
-    if (!reviewDecisionNeedsWritePlan(review_result.decision)) {
-      throw new Error("当前 ReviewResult 未放行写入，不能进入 adapter 执行。");
-    }
-
-    if (review_result.final_write_plan === undefined) {
-      throw new Error("当前 ReviewResult 缺少 final_write_plan。");
-    }
-
-    if (review_result.decision === "ask_confirm" && !confirmation_granted) {
-      throw new Error("当前 WritePlan 仍需用户确认，不能提前执行。");
-    }
-
-    return this.executeApprovedWritePlan(review_result.final_write_plan);
   }
 
   private requireAppendParent(plan: WritePlan): string {

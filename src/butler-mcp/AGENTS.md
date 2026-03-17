@@ -9,18 +9,17 @@
 ## STRUCTURE
 
 - `runtime/` - runtime context creation and env-based bootstrap.
-- `registry/` - capability whitelist registration and read/write phase assembly.
-- `capabilities/<capability-id>/` - per-capability `schema.ts`, `handler.ts`, and `presenter.ts`.
+- `registry.ts` - capability whitelist registration and runtime assembly.
+- `capabilities/<capability-id>/tool.ts` - per-capability MCP schema, handler, and presenter glue.
 - `server.ts` - Butler MCP server creation and registration entry.
 - `main.ts` - stdio startup entrypoint.
-- `capability-tools.ts` - compatibility export surface only; do not grow it into a second registry.
 
 ## CONVENTIONS
 
 - Register only the Butler semantic capability whitelist.
 - Keep schemas aligned with capability-facing application inputs and outputs, not raw SiYuan payload shapes.
-- Let handlers validate, delegate, and present; keep workflow branching in `src/application/`.
-- Build runtime context once and pass ports/services downward rather than recreating adapter state inside each handler.
+- Let capability tools validate, delegate, and present; keep workflow branching in `src/application/`.
+- Build runtime context once and pass adapter contracts plus application use-cases downward rather than recreating adapter state inside each handler.
 
 ## ANTI-PATTERNS
 

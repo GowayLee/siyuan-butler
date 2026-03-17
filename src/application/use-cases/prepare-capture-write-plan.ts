@@ -1,9 +1,11 @@
-import type { DailyJournalReadModel } from "../../adapter/models/read-model.js";
-import type { ButlerReadModelPort } from "../../adapter/ports/contracts.js";
+import type { ButlerReadModelPort } from "../../adapter/contracts.js";
+import type { DailyJournalReadModel } from "../../adapter/read-models.js";
 import { hasText } from "../../domain/support/helpers.js";
 import type { SparkleDraft } from "../../domain/objects/sparkle-draft.js";
 import type { WritePlan } from "../../domain/objects/write-plan.js";
-import { prepareCaptureWritePlan } from "../workflows/capture/prepare-capture-write-plan.js";
+import { normalizeWritePlan } from "../../domain/objects/write-plan.js";
+import { createCaptureWritePlan } from "../../domain/builders/write-plan-builders.js";
+import { resolveDailyJournalTarget } from "../shared/target-resolution.js";
 
 export interface PrepareCaptureWritePlanInput {
   plan_id: string;
@@ -42,7 +44,7 @@ function createDailyJournalFromTodaySparklesTarget(
   };
 }
 
-export async function prepareCaptureWritePlanCapability(
+export async function prepareCaptureWritePlanUseCase(
   reader: ButlerReadModelPort,
   input: PrepareCaptureWritePlanInput,
   options: {
@@ -70,11 +72,21 @@ export async function prepareCaptureWritePlanCapability(
     });
   }
 
-  return prepareCaptureWritePlan({
+  const target = resolveDailyJournalTarget({
+    journal,
+    section_kind: "sparkles",
+    preferred_section_label: input.section_label,
+  });
+  const basePlan = createCaptureWritePlan({
     plan_id: input.plan_id,
     draft: input.draft,
-    journal,
-    section_label: input.section_label,
+    target_page: target.target_page,
+    target_section: target.target_section,
     scope_note: input.scope_note,
-  }).write_plan;
+  });
+
+  return normalizeWritePlan({
+    ...basePlan,
+    blocked_by: [...(basePlan.blocked_by ?? []), ...target.blocked_by],
+  });
 }

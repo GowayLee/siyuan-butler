@@ -1,7 +1,7 @@
 import type {
   DailyJournalReadModel,
   JournalSectionReadModel,
-} from "../../models/read-model.js";
+} from "../../read-models.js";
 import { hasText } from "../../../domain/support/helpers.js";
 import type { SiyuanButlerAdapterConfig } from "../config.js";
 import type { SiyuanClient } from "../client.js";

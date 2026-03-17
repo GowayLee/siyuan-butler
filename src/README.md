@@ -6,11 +6,10 @@
 
 当前目录分工：
 
-- `butler-mcp/` - runtime 主轴；负责 capability registry、tool schema、handler、transport 与启动入口
-- `application/` - workflow/use-case 编排层，负责把 skill 对象收敛成 runtime 可审查动作
+- `butler-mcp/` - runtime 主轴；负责 capability 注册、tool glue、transport 与启动入口
+- `application/` - use-case 编排层，负责把 skill 对象收敛成 runtime 可审查动作
 - `domain/` - 第一版领域对象骨架与后续规则承载处
-- `adapter/` - 思源适配层与其他底层集成，围绕 read/write 端口服务于 MCP runtime
-- `shared/` - 跨层共享 schema、常量与小型纯工具
+- `adapter/` - 思源适配层与其他底层集成，围绕 read/write 合同与 read-model 服务于 MCP runtime
 
 当前已开始落地的重点是 `src/domain/`，并开始补上 `src/application/` 与 `src/adapter/` 之间的中间层：
 
@@ -30,11 +29,13 @@
 - 当前默认不写入 Sparkle block attrs
 - rekindle 仍保留为 pending 设计，不作为已稳定开放的 capability 链路
 
-当前 runtime 仍然刻意保持很小，但目录开始围绕 `butler-mcp/` 重排：
+当前 runtime 仍然刻意保持很小，但目录开始围绕 `butler-mcp/` 收拢：
 
-- `butler-mcp/capabilities/` 按 capability 拆分 schema、handler、presenter
-- `butler-mcp/registry/` 负责把 capability 白名单注册到 MCP server
-- `adapter/ports/`、`adapter/models/`、`adapter/resolvers/` 把端口、read-model 与目标解析明确分开
+- `butler-mcp/capabilities/<capability-id>/tool.ts` 按 capability 收口 MCP schema、handler 与 presenter glue
+- `butler-mcp/registry.ts` 负责把 capability 白名单注册到 MCP server
+- `application/use-cases/` 直接承接 capability-facing orchestration，减少额外转发层
+- `application/shared/target-resolution.ts` 收口纯目标解析逻辑，避免把纯语义步骤塞进 adapter
+- `adapter/contracts.ts` 与 `adapter/read-models.ts` 保留集成边界所需的最小稳定合同
 - `adapter/siyuan/readers/` 与 `adapter/siyuan/writers/` 分开底层读取和执行
 - `adapter/siyuan/codecs/` 收口 markdown / attrs 解析逻辑，避免 adapter class 继续膨胀
 

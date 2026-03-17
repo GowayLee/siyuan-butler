@@ -2,7 +2,7 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 
 import { listButlerCapabilities } from "../application/index.js";
-import { registerButlerCapabilityTools } from "./registry/capability-registry.js";
+import { registerButlerCapabilityTools } from "./registry.js";
 
 export interface ButlerMcpServerOptions {
   name?: string;

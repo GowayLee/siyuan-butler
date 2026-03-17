@@ -1,4 +1,4 @@
-import type { ControlledWriteReceipt } from "../../models/read-model.js";
+import type { ControlledWriteReceipt } from "../../read-models.js";
 import { hasText } from "../../../domain/support/helpers.js";
 import type { WritePlan } from "../../../domain/objects/write-plan.js";
 import { SiyuanApiError, type SiyuanClient } from "../client.js";

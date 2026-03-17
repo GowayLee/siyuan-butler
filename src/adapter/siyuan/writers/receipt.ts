@@ -1,4 +1,4 @@
-import type { AffectedObjectRef } from "../../models/read-model.js";
+import type { AffectedObjectRef } from "../../read-models.js";
 import type { WritePlan } from "../../../domain/objects/write-plan.js";
 
 export function buildAffectedObjects(

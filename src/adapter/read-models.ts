@@ -1,7 +1,7 @@
 import type {
   JournalDate,
   TargetSectionRef,
-} from "../../domain/value-objects/common.js";
+} from "../domain/value-objects/common.js";
 
 export interface JournalSectionReadModel {
   section_kind: TargetSectionRef["section_kind"];

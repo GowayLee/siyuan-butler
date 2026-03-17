@@ -8,16 +8,14 @@
 
 ## STRUCTURE
 
-- `ports/` - read/write contracts consumed by `src/application/`.
-- `models/` - stable read-model and receipt types.
-- `resolvers/` - pure target resolution logic from journal context to Butler refs.
+- `contracts.ts` - read/write contracts consumed by `src/application/`.
+- `read-models.ts` - stable read-model and receipt types.
 - `siyuan/` - thin facade plus `readers/`, `writers/`, `codecs/`, and `support/` modules for concrete integration.
 
 ## CONVENTIONS
 
-- Keep `ports/` capability-oriented and review-aware, not endpoint-shaped.
-- Use `models/` to stabilize what application/workflows can rely on after reads.
-- Keep `resolvers/` pure; they should translate read context into explicit targets and blockers.
+- Keep `contracts.ts` capability-oriented and review-aware, not endpoint-shaped.
+- Use `read-models.ts` to stabilize what application/use-cases can rely on after reads.
 - Keep `siyuan/adapter.ts` thin and push parsing/execution details down into focused modules.
 
 ## ANTI-PATTERNS

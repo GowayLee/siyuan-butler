@@ -15,16 +15,15 @@
 当前目录现在按 MCP runtime 主轴拆成几层：
 
 - `runtime/` - runtime context 与 env-based bootstrap
-- `registry/` - capability 白名单注册与分组注册
-- `capabilities/<capability-id>/` - 每个 capability 自己的 schema、handler、presenter
+- `registry.ts` - capability 白名单注册与 runtime 组装
+- `capabilities/<capability-id>/tool.ts` - 每个 capability 自己的 schema、handler、presenter glue
 - `server.ts` / `main.ts` - MCP server 创建与 stdio 启动入口
 
 运行时边界也随之更明确：
 
 - `server.ts` 负责创建 Butler MCP server，并只注册白名单里的 workflow capability
-- `registry/` 负责按读写阶段装配 capability
+- `registry.ts` 负责按白名单装配 capability
 - `capabilities/` 负责把单个 MCP tool 接到 `src/application/` 与 `src/adapter/siyuan/`
-- `capability-tools.ts` 当前仅保留兼容导出口，避免旧 import 断裂
 - `src/adapter/siyuan/` 提供 env-based 的最小思源 adapter 创建路径
 
 ## capability I/O 示例

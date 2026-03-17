@@ -3,7 +3,7 @@ import { join } from "node:path";
 import type {
   ButlerReadModelPort,
   ButlerWritePort,
-} from "../../adapter/ports/contracts.js";
+} from "../../adapter/contracts.js";
 import { createSiyuanButlerAdapterFromEnv } from "../../adapter/siyuan/adapter.js";
 import { resolveButlerCacheRoot } from "./cache-root.js";
 import { FileHandoffStore } from "./handoff-store.js";

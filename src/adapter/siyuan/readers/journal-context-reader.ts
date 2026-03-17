@@ -1,4 +1,4 @@
-import type { JournalContextReadModel } from "../../models/read-model.js";
+import type { JournalContextReadModel } from "../../read-models.js";
 import { hasText } from "../../../domain/support/helpers.js";
 import type { SiyuanButlerAdapterConfig } from "../config.js";
 import type { SiyuanClient } from "../client.js";
@@ -45,7 +45,9 @@ export async function readJournalContext(
     const previewLines = await Promise.all(
       previewBlocks.map(async (block) => {
         const kramdown = await client.getBlockKramdown(block.id);
-        return extractFirstMeaningfulLine(kramdown.kramdown) ?? `[${block.type}]`;
+        return (
+          extractFirstMeaningfulLine(kramdown.kramdown) ?? `[${block.type}]`
+        );
       }),
     );
 
@@ -56,7 +58,9 @@ export async function readJournalContext(
       summary_lines:
         previewLines.length > 0
           ? previewLines
-          : [`章节 ${targetSection.section_label ?? input.section_kind} 目前为空。`],
+          : [
+              `章节 ${targetSection.section_label ?? input.section_kind} 目前为空。`,
+            ],
       related_block_ids: previewBlocks.map((block) => block.id),
     };
   }
