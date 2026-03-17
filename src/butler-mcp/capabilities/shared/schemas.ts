@@ -2,6 +2,16 @@ import { z } from "zod";
 
 export const sectionKindSchema = z.enum(["sparkles", "journal-body"]);
 
+export const planTokenSchema = z
+  .string()
+  .min(1)
+  .describe("必须原样传递 prepare 返回的 plan_token。");
+
+export const reviewTokenSchema = z
+  .string()
+  .min(1)
+  .describe("必须原样传递 review 返回的 review_token。");
+
 export const sparkleDraftSchema = z.object({
   source: z.string(),
   glow: z.string(),

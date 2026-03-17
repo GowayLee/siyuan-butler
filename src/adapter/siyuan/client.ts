@@ -7,6 +7,31 @@ import type {
   SiyuanOperationBatch,
 } from "./types.js";
 
+export class SiyuanApiError extends Error {
+  readonly apiPath: string;
+
+  readonly httpStatus?: number;
+
+  readonly apiCode?: number;
+
+  readonly apiMessage?: string;
+
+  constructor(input: {
+    apiPath: string;
+    message: string;
+    httpStatus?: number;
+    apiCode?: number;
+    apiMessage?: string;
+  }) {
+    super(input.message);
+    this.name = "SiyuanApiError";
+    this.apiPath = input.apiPath;
+    this.httpStatus = input.httpStatus;
+    this.apiCode = input.apiCode;
+    this.apiMessage = input.apiMessage;
+  }
+}
+
 export interface SiyuanClientOptions {
   fetch_impl?: typeof fetch;
 }
@@ -37,9 +62,12 @@ export class SiyuanClient {
   }
 
   async getChildBlocks(id: string): Promise<SiyuanChildBlock[]> {
-    const response = await this.post<SiyuanChildBlock[]>("/api/block/getChildBlocks", {
-      id,
-    });
+    const response = await this.post<SiyuanChildBlock[]>(
+      "/api/block/getChildBlocks",
+      {
+        id,
+      },
+    );
 
     return response.data;
   }
@@ -63,13 +91,18 @@ export class SiyuanClient {
   }
 
   async getHPathByID(id: string): Promise<string> {
-    const response = await this.post<string>("/api/filetree/getHPathByID", { id });
+    const response = await this.post<string>("/api/filetree/getHPathByID", {
+      id,
+    });
 
     return response.data;
   }
 
   async getPathByID(id: string): Promise<SiyuanDocPath> {
-    const response = await this.post<SiyuanDocPath>("/api/filetree/getPathByID", { id });
+    const response = await this.post<SiyuanDocPath>(
+      "/api/filetree/getPathByID",
+      { id },
+    );
 
     return response.data;
   }
@@ -79,11 +112,14 @@ export class SiyuanClient {
     data: string;
     dataType?: "markdown" | "dom";
   }): Promise<SiyuanOperationBatch[]> {
-    const response = await this.post<SiyuanOperationBatch[]>("/api/block/appendBlock", {
-      parentID: input.parentID,
-      data: input.data,
-      dataType: input.dataType ?? "markdown",
-    });
+    const response = await this.post<SiyuanOperationBatch[]>(
+      "/api/block/appendBlock",
+      {
+        parentID: input.parentID,
+        data: input.data,
+        dataType: input.dataType ?? "markdown",
+      },
+    );
 
     return response.data;
   }
@@ -93,11 +129,14 @@ export class SiyuanClient {
     data: string;
     dataType?: "markdown" | "dom";
   }): Promise<SiyuanOperationBatch[]> {
-    const response = await this.post<SiyuanOperationBatch[]>("/api/block/updateBlock", {
-      id: input.id,
-      data: input.data,
-      dataType: input.dataType ?? "markdown",
-    });
+    const response = await this.post<SiyuanOperationBatch[]>(
+      "/api/block/updateBlock",
+      {
+        id: input.id,
+        data: input.data,
+        dataType: input.dataType ?? "markdown",
+      },
+    );
 
     return response.data;
   }
@@ -128,15 +167,22 @@ export class SiyuanClient {
     });
 
     if (!response.ok) {
-      throw new Error(`SiYuan API ${path} 返回 HTTP ${response.status}。`);
+      throw new SiyuanApiError({
+        apiPath: path,
+        httpStatus: response.status,
+        message: `SiYuan API ${path} 返回 HTTP ${response.status}。`,
+      });
     }
 
     const payload = (await response.json()) as SiyuanApiResponse<T>;
 
     if (payload.code !== 0) {
-      throw new Error(
-        `SiYuan API ${path} 调用失败: ${payload.msg || `code=${payload.code}`}`,
-      );
+      throw new SiyuanApiError({
+        apiPath: path,
+        apiCode: payload.code,
+        apiMessage: payload.msg,
+        message: `SiYuan API ${path} 调用失败: ${payload.msg || `code=${payload.code}`}`,
+      });
     }
 
     return payload;

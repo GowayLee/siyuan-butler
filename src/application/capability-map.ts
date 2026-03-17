@@ -47,26 +47,44 @@ export const BUTLER_CAPABILITY_MAP: ButlerCapabilityDescriptor[] = [
   {
     capability_id: "prepare-capture-write-plan",
     workflow_stage: "capture",
-    consumes: ["SparkleDraft", "DailyJournalReadModel"],
-    produces: ["WritePlan"],
-    purpose: "Converge a SparkleDraft into a reviewable append-sparkle plan.",
+    consumes: ["SparkleDraft", "journal_date", "section_label?", "scope_note?"],
+    produces: ["plan_token", "journal_date", "next_action", "blocked_by?"],
+    purpose:
+      "Converge a SparkleDraft into a cached reviewable append-sparkle plan token that must be passed through unchanged.",
     forbidden_calls: ["Do not execute writes.", "Do not bypass Policy Guard."],
   },
   {
     capability_id: "review-write-plan",
     workflow_stage: "review",
-    consumes: ["WritePlan"],
-    produces: ["ReviewResult"],
-    purpose: "Apply the stable Policy Guard review boundary before any write.",
+    consumes: ["plan_token (pass through unchanged)"],
+    produces: [
+      "decision",
+      "review_token?",
+      "needs_confirmation",
+      "confirm_scope?",
+      "blocked_by?",
+      "next_action",
+    ],
+    purpose:
+      "Apply the stable Policy Guard review boundary to the stored WritePlan behind the original plan token.",
     forbidden_calls: ["Do not author SparkleDraft or RekindleProposal here."],
   },
   {
     capability_id: "execute-reviewed-write-plan",
     workflow_stage: "controlled-write",
-    consumes: ["ReviewResult", "confirmation_granted?"],
-    produces: ["ControlledWriteReceipt"],
-    purpose:
-      "Execute only the final_write_plan that review has already approved.",
+    consumes: [
+      "review_token (pass through unchanged)",
+      "confirmation_granted?",
+    ],
+    produces: [
+      "journal_date",
+      "page_id?",
+      "section_id?",
+      "sparkle_block_id?",
+      "repaired_section",
+      "next_action",
+    ],
+    purpose: "Execute only the stored plan that review has already approved.",
     forbidden_calls: [
       "Do not accept free-form text as a write request.",
       "Do not execute plans that have not passed review.",

@@ -39,4 +39,5 @@ export interface ControlledWriteReceipt {
   plan_id: string;
   summary: string;
   affected_objects: AffectedObjectRef[];
+  section_repaired?: boolean;
 }

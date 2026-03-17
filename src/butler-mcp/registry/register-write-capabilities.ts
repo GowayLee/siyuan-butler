@@ -22,7 +22,7 @@ export function registerWriteCapabilities(
       {
         title: "准备 Capture 写入计划 · prepare-capture-write-plan",
         description:
-          "将最小 SparkleDraft 收敛为可进入 review 的 capture WritePlan。",
+          "将最小 SparkleDraft 收敛为可进入 review 的 capture plan token；后续必须原样传递返回的 plan_token。",
         inputSchema: prepareCaptureWritePlanInputSchema,
       },
       async (input) =>
@@ -37,11 +37,14 @@ export function registerWriteCapabilities(
       "review-write-plan",
       {
         title: "审查写入计划 · review-write-plan",
-        description: "对 WritePlan 应用 Butler 的 Policy Guard review 边界。",
+        description:
+          "读取上一步原样返回的 plan_token，并对对应 WritePlan 应用 Policy Guard。",
         inputSchema: reviewWritePlanInputSchema,
       },
       async (input) =>
-        presentReviewWritePlanResult(handleReviewWritePlan(input)),
+        presentReviewWritePlanResult(
+          await handleReviewWritePlan(context, input),
+        ),
     );
   }
 
@@ -50,7 +53,8 @@ export function registerWriteCapabilities(
       "execute-reviewed-write-plan",
       {
         title: "执行已审查写入计划 · execute-reviewed-write-plan",
-        description: "只执行已经被 Policy Guard 放行的 final_write_plan。",
+        description:
+          "读取上一步原样返回的 review_token，并只执行已经被 Policy Guard 放行的计划。",
         inputSchema: executeReviewedWritePlanInputSchema,
       },
       async (input) =>

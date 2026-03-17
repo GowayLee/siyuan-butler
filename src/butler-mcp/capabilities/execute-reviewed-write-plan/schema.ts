@@ -1,8 +1,8 @@
 import { z } from "zod";
 
-import { reviewResultSchema } from "../shared/schemas.js";
+import { reviewTokenSchema } from "../shared/schemas.js";
 
 export const executeReviewedWritePlanInputSchema = {
-  review_result: reviewResultSchema,
+  review_token: reviewTokenSchema,
   confirmation_granted: z.boolean().optional(),
 };

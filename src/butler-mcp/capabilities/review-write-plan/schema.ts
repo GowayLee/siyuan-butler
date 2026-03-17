@@ -1,5 +1,5 @@
-import { writePlanSchema } from "../shared/schemas.js";
+import { planTokenSchema } from "../shared/schemas.js";
 
 export const reviewWritePlanInputSchema = {
-  write_plan: writePlanSchema,
+  plan_token: planTokenSchema,
 };

@@ -25,6 +25,18 @@ export function extractHeadingLabel(kramdown: string): string | undefined {
     .trim();
 }
 
+export function isHeadingLabelMatch(
+  kramdown: string,
+  expectedLabel: string,
+): boolean {
+  const label = extractHeadingLabel(kramdown);
+
+  return (
+    hasText(label) &&
+    normalizeSectionLabel(label) === normalizeSectionLabel(expectedLabel)
+  );
+}
+
 export function extractFirstMeaningfulLine(
   markdown: string,
 ): string | undefined {

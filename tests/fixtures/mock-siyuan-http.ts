@@ -1,9 +1,14 @@
 import assert from "node:assert/strict";
+import { mkdtempSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 
 import { SiyuanButlerAdapter } from "../../src/adapter/siyuan/adapter.js";
 import { SiyuanClient } from "../../src/adapter/siyuan/client.js";
 import { loadSiyuanButlerAdapterConfigFromEnv } from "../../src/adapter/siyuan/config.js";
+import { FileHandoffStore } from "../../src/butler-mcp/runtime/handoff-store.js";
 import type { ButlerMcpRuntimeContext } from "../../src/butler-mcp/runtime/context.js";
+import { TodaySparklesTargetCache } from "../../src/butler-mcp/runtime/today-sparkles-target-cache.js";
 
 export interface ExpectedSiyuanRequest {
   path: string;
@@ -88,9 +93,16 @@ export function createMockButlerContext(
 
   const client = new SiyuanClient(config, { fetch_impl: fetchImpl });
   const adapter = new SiyuanButlerAdapter(config, client);
+  const cacheRoot = mkdtempSync(join(tmpdir(), "siyuan-butler-test-"));
 
   return {
-    context: { adapter },
+    context: {
+      adapter,
+      handoffStore: new FileHandoffStore(join(cacheRoot, "handoff")),
+      todaySparklesTargetCache: new TodaySparklesTargetCache(
+        join(cacheRoot, "today-sparkles-target.json"),
+      ),
+    },
     requests,
     assertAllRequestsHandled() {
       assert.equal(
