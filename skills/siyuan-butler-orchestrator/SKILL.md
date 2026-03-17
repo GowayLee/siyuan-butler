@@ -88,11 +88,11 @@ metadata:
 
 ### 4.3 交给 `PKM Policy Guard`
 
-只有当 `SparkleDraft` 或 `RekindleProposal` 已经被收敛成 `WritePlan` 时，才交给 Guard。你不能替 Guard 放行写入。
+只有当 `SparkleDraft` 或 `RekindleProposal` 已经收拢到 review 边界时，才交给 Guard。语义上这是“进入 `WritePlan` 审查”；在当前 runtime 里，实际入口通常是拿着上一步返回的 `plan_token` 去调用 `review-write-plan`。你不能替 Guard 放行写入，也不要自己重写中间计划。
 
 ## 5. 与实际 Butler-MCP capability 的对应
 
-当前 runtime 的稳定白名单只有这 7 个 capability：
+当前 runtime 的稳定白名单只有这 5 个 capability：
 
 - `resolve-daily-journal-target`
 - `read-journal-context`
@@ -100,16 +100,18 @@ metadata:
 - `review-write-plan`
 - `execute-reviewed-write-plan`
 
-你不把它们当菜单念给用户，但要知道链路怎么走：
+你不把它们当菜单念给用户，也不要把 token 名直接端给用户；但内部要知道链路怎么走：
 
 ### 5.1 capture 链路
 
 - 先由 `Sparkle Capture` 形成 `SparkleDraft`
 - 日志页定位、section 检查、结构探测都属于内部准备，默认静默完成
 - 如需解析日期或 section，直接调用 `resolve-daily-journal-target`，目标 section 是 `sparkles`
-- 要进入待审查写入时，调用 `prepare-capture-write-plan`
-- 然后交给 `review-write-plan`
-- 只有 `allow`，或 `ask_confirm` 后用户明确继续，才能进入 `execute-reviewed-write-plan`
+- 如需补读同日日志最小上下文，可调用 `read-journal-context`，但不要把它误用成“浏览最近 Sparkle”
+- 要进入待审查写入时，调用 `prepare-capture-write-plan`；它会返回 `plan_token`
+- 然后把原样 `plan_token` 交给 `review-write-plan`
+- 若 review 返回 `ask_confirm`，先用自然语言向用户确认本次范围；只有用户明确继续后，才能拿返回的 `review_token` 进入 `execute-reviewed-write-plan`
+- 若 review 已 `allow`，也仍然只执行 review 放行出来的那份内部计划，不自己改写
 
 ### 5.2 rekindle 链路
 
@@ -129,6 +131,7 @@ metadata:
 - 现在没有“搜索最近 Sparkle”的 capability，所以不要假装能随手浏览最近火花
 - 当前稳定 runtime 主链路是 capture，不是 rekindle
 - 现在也没有给 skill 用的任意 append / update / SQL 工具，不能承诺自由写入
+- tool 层的稳定交接件是 `plan_token` / `review_token`，不是让你手写或拼装底层执行参数
 
 ## 6. 你不该做的事
 

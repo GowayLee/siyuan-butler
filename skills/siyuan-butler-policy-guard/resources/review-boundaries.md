@@ -10,6 +10,8 @@ Guard 守的是 `propose -> review -> write` 里的 review 边界。
 
 进入 Guard 前，输入对象应当已经是 `WritePlan`，而不是一段自由文本，也不是半成品语义判断。
 
+在当前 runtime 的实际 tool 交接口径里，这通常表现为：上一步已经把计划收进 `plan_token`，Guard 负责审的是这个 token 背后的受控计划，而不是让 skill 重新拼一遍参数。
+
 ## 3. Guard 最关心的四件事
 
 - 目标是否明确

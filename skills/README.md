@@ -28,3 +28,11 @@ These packages are the agent-facing interaction layer. The main executable logic
 当前稳定 runtime 主链路先聚焦 capture；rekindle 仍保留为 pending 设计。
 
 这些 capability 是 skill 与 runtime 的受控交接口径，不等于 skill 自己承担这些职责。
+
+另外，当前 runtime 的写入链路已经采用 token handoff：
+
+- `prepare-capture-write-plan` 返回 `plan_token`
+- `review-write-plan` 消费原样 `plan_token`，放行时返回 `review_token`
+- `execute-reviewed-write-plan` 只消费原样 `review_token`
+
+这些 token 属于 skill 与 runtime 之间的内部交接件，不是用户可见术语，也不该被改写、重组或解释成新的流程名词。

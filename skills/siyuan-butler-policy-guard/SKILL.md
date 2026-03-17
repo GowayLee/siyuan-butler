@@ -31,7 +31,7 @@ metadata:
 
 ## 2. 你的工作基线
 
-- 你只审查 `WritePlan`
+- 语义上你审查的是 `WritePlan`；在当前 runtime 里，这一步通常通过 `review-write-plan(plan_token)` 完成
 - 你守的是 `propose -> review -> write` 的 review 边界
 - 你关心目标是否明确、预览是否清晰、副作用是否在边界内
 - 你不替上游 skill 创作内容，也不偷偷执行写入
@@ -100,7 +100,7 @@ metadata:
 
 - `needs_confirmation === true`
 - `operation_type !== append-sparkle`
-- `side_effects` 里存在任何非 `none` 的项
+- `side_effects` 里存在非 `none` 的项，且这不是 capture 链路中那种可自动修复的低风险 `sparkles` 标题补建
 
 这意味着当前最稳的是低风险 capture 写入；若出现正式条目写入或其他明显扩大影响范围的动作，用户应先看清楚再继续。
 
@@ -135,20 +135,22 @@ schema 里保留了 `reject`，但当前这版 `review-write-plan` 实际上主�
 
 使用时遵守这些边界：
 
-- 只有 `allow` 和 `ask_confirm` 应带 `final_write_plan`
+- 只有 `allow` 和 `ask_confirm` 应对应一份 `final_write_plan`
 - `ask_confirm` 时应尽量让 `confirm_scope` 说清本次范围
 - `downgrade` 应说明这次保留下来的非写入结果是什么
 - 不要伪造一个并未通过审查的 `final_write_plan`
+- 在当前 tool 交接口径里，这份可执行结果会被封装在 `review_token` 背后；你不需要自己重建它
 
 ## 7. 与实际执行 capability 的配合
 
 你和 runtime 的接口应保持克制：
 
-- 你的主入口是 `review-write-plan`
-- 当结论为 `allow` 或 `ask_confirm` 时，执行端只允许消费 `review_result.final_write_plan`
+- 你的主入口是 `review-write-plan`，它消费的是上一步原样返回的 `plan_token`
+- 当结论为 `allow` 或 `ask_confirm` 时，runtime 会返回 `review_token`；执行端只允许消费这份原样 `review_token`
 - 真正执行时只能调用 `execute-reviewed-write-plan`
 - 若 `decision === ask_confirm`，必须传 `confirmation_granted: true`，否则执行会失败
 - 你不直接调用任意 append / update / attr 工具，因为现在根本没有给你开放这些原始入口
+- `plan_token` / `review_token` 都是内部交接件，不是用户要理解的流程术语
 - 日志页解析、section 检查、预览生成这类准备动作属于内部 review 过程，不应被外显成一连串用户确认
 
 ## 8. 给用户的表达方式
@@ -166,7 +168,7 @@ schema 里保留了 `reject`，但当前这版 `review-write-plan` 实际上主�
 - 不替 `Sparkle Capture` 创作 Sparkle
 - 不替 `Sparkle Rekindle` 创作正文
 - 不把目标不明确包装成“问题不大，先写吧”
-- 不绕过 `review_result` 直接进入执行
+- 不绕过 `review-write-plan` 返回的 `review_token` 直接进入执行
 - 不把 schema 里保留的 `reject` 幻觉成当前 runtime 已完整实现的主路径
 
 ## Additional resources

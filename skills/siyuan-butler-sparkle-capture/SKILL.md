@@ -105,7 +105,7 @@ metadata:
 
 - 几乎没有触发物，未来无法重返
 - 发光点太空，无法判断到底要保什么
-- 用户明确说要保存，但日期或保存倾向完全不明
+- 用户明确说要落盘，但 `journal_date` 还没被锁定
 
 追问要像帮助聚焦，而不是索要字段。
 
@@ -132,11 +132,13 @@ metadata:
 - 若只是给用户看草案，停在 `SparkleDraft`，不要强行进入写入
 - 日志页定位、section 检查、是否已有 `sparkles` 段落这类准备动作，默认由你静默完成，不要把它们外显成一步一问
 - 如需解析日志页或 section，直接调用 `resolve-daily-journal-target`，capture 的 section 应是 `sparkles`
-- 真要把草案收敛成待审查动作时，调用 `prepare-capture-write-plan`
-- `prepare-capture-write-plan` 现在直接要求 `journal_date`
-- 收敛出的 `WritePlan` 只能交给 `review-write-plan`
-- 只有 review 放行为 `allow`，或为 `ask_confirm` 且用户明确继续，才允许 `execute-reviewed-write-plan`
+- 如需补读同日日志的最小上下文，可调用 `read-journal-context`；不要把它误用成全库搜索或最近 Sparkle 浏览
+- 真要把草案收敛成待审查动作时，调用 `prepare-capture-write-plan`；它当前直接要求 `journal_date`，并会返回 `plan_token`
+- 把原样 `plan_token` 交给 `review-write-plan`，不要自己脑补或改写中间 `WritePlan`
+- 若 review 返回 `allow` 或 `ask_confirm`，后续真正可执行的交接件是 `review_token`
+- 只有 review 已放行，或为 `ask_confirm` 且用户明确继续时，才允许带着原样 `review_token` 调用 `execute-reviewed-write-plan`
 - 当前 runtime 不再默认写入 Sparkle block attrs
+- `plan_token` / `review_token` 是你与 runtime 的内部交接件，不是给用户讲流程时要反复暴露的名词
 - 除非缺少关键锚点而导致 `SparkleDraft` 或 `WritePlan` 根本无法成立，否则不要在中途频繁停下来问用户下一步怎么做
 
 ## 8. 你不该做的事

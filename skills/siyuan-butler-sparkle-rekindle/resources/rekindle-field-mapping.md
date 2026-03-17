@@ -55,6 +55,8 @@
 - `style_hint`
 - `confidence`
 
+其中 `backref_needed` / `backref_hint` 在当前阶段更像未来设计提示，不应被表述成已稳定可执行的 runtime 回写动作。
+
 ## 4. 与 runtime 的边界
 
 - 当前不要默认承诺这些工具已构成稳定 rekindle 主链路

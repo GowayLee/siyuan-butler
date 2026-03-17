@@ -136,8 +136,7 @@ metadata:
 
 当前阶段不要默认进入 runtime 执行面：
 
-- 不默认调用 `read-sparkle-record`
-- 不默认调用 `prepare-rekindle-write-plan`
+- 不假装当前已经有稳定开放的历史 Sparkle 读取或 rekindle prepare tool
 - 不默认承诺会有回写或正式条目落盘
 - 更适合把结果停在：成熟度判断、延期建议、或一段仅供用户审阅的提案
 
@@ -146,7 +145,7 @@ metadata:
 当前 runtime 的 Policy Guard 会对正式条目和带副作用的写入倾向于 `ask_confirm`。因此：
 
 - 只要是 `append-journal-entry`，就应默认用户会先看到预览
-- 只要你提出 `backref_needed`，就应预期这不是静默写入
+- 如果你在提案里写了 `backref_needed` 或其他联动设想，把它视为未来实现提示，不要把它说成当前 runtime 已能执行的动作
 - 如果你自己已经知道这条提案仍不成熟，最好不要把它推进到 write-plan 阶段再让 Guard 兜底
 
 ## 9. 你不该做的事

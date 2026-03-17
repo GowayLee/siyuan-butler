@@ -28,7 +28,7 @@
 
 - `needs_confirmation === true`
 - `operation_type !== append-sparkle`
-- `side_effects` 中存在非 `none` 项
+- `side_effects` 中存在非 `none` 项，且不属于 capture 链路里那种可自动修复的低风险 `sparkles` 标题补建
 
 在当前收窄后的运行时里，这更像“保留给正式条目或未来更复杂动作的确认口”，而不是日常 capture 的默认姿态。
 
@@ -49,7 +49,9 @@ schema 中保留了 `reject`，但当前实现主路径仍以 `allow / ask_confi
 
 ## 3. 输出对象的边界
 
-- `allow` / `ask_confirm` 应带 `final_write_plan`
+- `allow` / `ask_confirm` 在语义上应对应 `final_write_plan`
 - `ask_confirm` 最好带清晰的 `confirm_scope`
 - `downgrade` 应说明保留成什么非写入结果
 - 不要伪造一个其实还不能执行的 `final_write_plan`
+
+当前 tool 层不会把完整 `ReviewResult` 全部摊给 skill；可执行结果会通过 `review_token` 继续交接，所以不要自己重建它。

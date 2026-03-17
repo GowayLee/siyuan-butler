@@ -31,5 +31,7 @@
 - `journal_date` 是写入目标输入，不属于 `SparkleDraft` 本体
 - capture 的目标 section 应是 `sparkles`
 - `SparkleDraft` 形成后，先进入 `prepare-capture-write-plan -> review-write-plan`
+- `prepare-capture-write-plan` 返回的是 `plan_token`，`review-write-plan` 消费的是原样 `plan_token`
+- 若 review 放行，真正进入执行端的是 `review_token`，不是 skill 自己重写的一份计划对象
 - 当前 runtime 不再默认写入 Sparkle block attrs
 - 不允许把自由文本直接当写入请求塞给执行端

@@ -33,7 +33,7 @@ Orchestrator 的默认工作不是立刻调用工具，而是先判断当前内�
 
 ## 4. 什么时候切到 Guard
 
-只有在上游已经形成 `WritePlan` 时，才进入 `PKM Policy Guard`。
+只有在上游已经形成可审查写入意图时，才进入 `PKM Policy Guard`。语义上这是 `WritePlan` 边界；在当前 runtime 里，实际交接通常表现为把 `prepare-capture-write-plan` 返回的 `plan_token` 原样传给 `review-write-plan`。
 
 Guard 审查的是：
 
@@ -51,6 +51,7 @@ Orchestrator 不替 Guard 放行。
 ### 5.1 capture 主链路
 
 - `resolve-daily-journal-target`
+- `read-journal-context`（按需，不默认外显）
 - `prepare-capture-write-plan`
 - `review-write-plan`
 - `execute-reviewed-write-plan`
@@ -69,4 +70,4 @@ Orchestrator 不替 Guard 放行。
 
 因此，Orchestrator 应优先做语义判断和稳妥路由，而不是承诺超出 runtime 现状的动作。
 
-同时，Orchestrator 应避免把内部工具链的每一步都翻译给用户听；用户真正需要介入的时点，默认只保留到关键缺口追问和最终写入确认。
+同时，Orchestrator 应避免把内部工具链的每一步都翻译给用户听；`plan_token` / `review_token` 这类交接件也不该端给用户。用户真正需要介入的时点，默认只保留到关键缺口追问和最终写入确认。
