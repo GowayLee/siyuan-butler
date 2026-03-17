@@ -30,6 +30,8 @@ interface CliOptions {
 interface InstallerPaths {
   repoRoot: string;
   skillsSourceDir: string;
+  agentConfigSource: string;
+  agentPromptSource: string;
   defaultMcpEntry: string;
 }
 
@@ -360,26 +362,51 @@ function readConfigFile(configPath: string): Record<string, unknown> {
   return parsed as Record<string, unknown>;
 }
 
+function readRequiredObjectProperty(
+  data: Record<string, unknown>,
+  propertyName: string,
+  filePath: string,
+): Record<string, unknown> {
+  const value = data[propertyName];
+  if (!isPlainObject(value)) {
+    throw new Error(
+      `Expected '${propertyName}' to be an object in ${filePath}`,
+    );
+  }
+
+  return value;
+}
+
 function isPlainObject(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
 function updateOpencodeConfig(
   configPath: string,
+  agentConfigPath: string,
   command: readonly string[],
   environment: EnvironmentMap,
   backupConfig: boolean,
-): void {
+): string[] {
   if (backupConfig && existsSync(configPath)) {
     copyFileSync(configPath, `${configPath}.bak`);
     stdout.write(`Backed up existing config to ${configPath}.bak\n`);
   }
 
   const data = readConfigFile(configPath);
+  const sourceConfig = readConfigFile(agentConfigPath);
+  const sourceAgents = readRequiredObjectProperty(
+    sourceConfig,
+    "agent",
+    agentConfigPath,
+  );
   const mcp = isPlainObject(data.mcp) ? data.mcp : {};
+  const agent = isPlainObject(data.agent) ? data.agent : {};
 
   data.$schema = "https://opencode.ai/config.json";
   data.mcp = mcp;
+  data.agent = agent;
+  Object.assign(agent, sourceAgents);
   mcp["siyuan-butler"] = {
     type: "local",
     command: [...command],
@@ -389,6 +416,41 @@ function updateOpencodeConfig(
 
   mkdirSync(dirname(configPath), { recursive: true });
   writeFileSync(configPath, `${JSON.stringify(data, null, 2)}\n`, "utf8");
+
+  return Object.keys(sourceAgents);
+}
+
+async function installPromptFile(
+  promptSourcePath: string,
+  promptTargetPath: string,
+  mode: InstallMode,
+  force: boolean,
+  prompter: Prompter,
+): Promise<string> {
+  if (pathExists(promptTargetPath)) {
+    if (!force) {
+      const shouldReplace = await prompter.promptYesNo(
+        `Prompt file already exists at ${promptTargetPath}. Replace it?`,
+        "n",
+      );
+
+      if (!shouldReplace) {
+        return `${promptTargetPath}: skipped`;
+      }
+    }
+
+    removeExistingPath(promptTargetPath);
+  }
+
+  mkdirSync(dirname(promptTargetPath), { recursive: true });
+
+  if (mode === "copy") {
+    copyFileSync(promptSourcePath, promptTargetPath);
+    return `${promptTargetPath}: copied`;
+  }
+
+  symlinkSync(promptSourcePath, promptTargetPath, "file");
+  return `${promptTargetPath}: symlinked`;
 }
 
 async function installSkills(
@@ -439,6 +501,8 @@ async function run(): Promise<void> {
   const paths: InstallerPaths = {
     repoRoot,
     skillsSourceDir: join(repoRoot, "skills"),
+    agentConfigSource: join(repoRoot, "agents", "agent-config.json"),
+    agentPromptSource: join(repoRoot, "agents", "bulter-prompts.md"),
     defaultMcpEntry: join(repoRoot, "dist", "butler-mcp", "main.js"),
   };
 
@@ -454,6 +518,8 @@ async function run(): Promise<void> {
     const baseDir = await prompter.chooseBaseDir(parsedArgs.baseDir);
     const opencodeDir = join(baseDir, ".opencode");
     const skillsTargetDir = join(opencodeDir, "skills");
+    const promptsTargetDir = join(opencodeDir, "prompts");
+    const promptTargetPath = join(promptsTargetDir, "bulter-prompts.md");
     const configPath = join(opencodeDir, "opencode.json");
     const mode = await prompter.chooseInstallMode(parsedArgs.mode);
     const defaultMcpCommand = createDefaultMcpCommand(paths);
@@ -475,6 +541,7 @@ async function run(): Promise<void> {
     stdout.write(` - Repository root: ${paths.repoRoot}\n`);
     stdout.write(` - OpenCode dir:    ${opencodeDir}\n`);
     stdout.write(` - Skills dir:      ${skillsTargetDir}\n`);
+    stdout.write(` - Prompts dir:     ${promptsTargetDir}\n`);
     stdout.write(` - Config path:     ${configPath}\n`);
     stdout.write(` - Skill mode:      ${mode}\n`);
     stdout.write(` - MCP command:     ${formatCommand(command)}\n`);
@@ -488,6 +555,7 @@ async function run(): Promise<void> {
     }
 
     mkdirSync(skillsTargetDir, { recursive: true });
+    mkdirSync(promptsTargetDir, { recursive: true });
     const installResults = await installSkills(
       skillDirs,
       skillsTargetDir,
@@ -496,8 +564,17 @@ async function run(): Promise<void> {
       prompter,
     );
 
-    updateOpencodeConfig(
+    const promptInstallResult = await installPromptFile(
+      paths.agentPromptSource,
+      promptTargetPath,
+      mode,
+      parsedArgs.force,
+      prompter,
+    );
+
+    const installedAgents = updateOpencodeConfig(
       configPath,
+      paths.agentConfigSource,
       command,
       environment,
       parsedArgs.backupConfig,
@@ -507,7 +584,9 @@ async function run(): Promise<void> {
     for (const result of installResults) {
       stdout.write(` - ${result}\n`);
     }
+    stdout.write(` - ${promptInstallResult}\n`);
     stdout.write(` - opencode.json updated: ${configPath}\n`);
+    stdout.write(` - Installed agents: ${installedAgents.join(", ")}\n`);
 
     if (formatCommand(command) === formatCommand(defaultMcpCommand)) {
       stdout.write(" - Default MCP command points to the built dist entry.\n");
