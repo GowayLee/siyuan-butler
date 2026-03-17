@@ -1,4 +1,4 @@
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { mkdir, readFile, unlink, writeFile } from "node:fs/promises";
 import { dirname } from "node:path";
 
 import { hasText, normalizeText } from "../../domain/support/helpers.js";
@@ -31,17 +31,36 @@ function isTodayJournalDate(journalDate: string): boolean {
   return journalDate === getTodayLocalDate();
 }
 
+async function deleteFileIfExists(filePath: string): Promise<void> {
+  try {
+    await unlink(filePath);
+  } catch (error) {
+    if (error instanceof Error && "code" in error && error.code === "ENOENT") {
+      return;
+    }
+
+    throw error;
+  }
+}
+
 export class TodaySparklesTargetCache {
   constructor(private readonly filePath: string) {}
 
   async read(
     journalDate: string,
   ): Promise<TodaySparklesTargetSnapshot | undefined> {
-    if (!isTodayJournalDate(journalDate)) return undefined;
-
     try {
       const raw = await readFile(this.filePath, "utf8");
       const parsed = JSON.parse(raw) as Partial<TodaySparklesTargetSnapshot>;
+
+      if (parsed.journal_date !== getTodayLocalDate()) {
+        await deleteFileIfExists(this.filePath);
+        return undefined;
+      }
+
+      if (!isTodayJournalDate(journalDate)) {
+        return undefined;
+      }
 
       if (
         parsed.journal_date !== journalDate ||

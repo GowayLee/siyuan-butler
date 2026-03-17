@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { mkdir, readFile, unlink, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 
 import type { ReviewResult } from "../../domain/objects/review-result.js";
@@ -51,6 +51,18 @@ async function writeJsonFile(filePath: string, value: unknown): Promise<void> {
   await writeFile(filePath, JSON.stringify(value, null, 2), "utf8");
 }
 
+async function deleteFileIfExists(filePath: string): Promise<void> {
+  try {
+    await unlink(filePath);
+  } catch (error) {
+    if (isNodeErrorWithCode(error, "ENOENT")) {
+      return;
+    }
+
+    throw error;
+  }
+}
+
 export class FileHandoffStore {
   constructor(private readonly handoffDir: string) {}
 
@@ -64,6 +76,10 @@ export class FileHandoffStore {
     return this.loadTokenFile<WritePlan>("plan", token);
   }
 
+  async deletePlan(token: string): Promise<void> {
+    return this.deleteTokenFile("plan", token);
+  }
+
   async saveReview(reviewResult: ReviewResult): Promise<string> {
     const token = `review_${randomUUID()}`;
     await writeJsonFile(this.getFilePath(token), reviewResult);
@@ -72,6 +88,10 @@ export class FileHandoffStore {
 
   async loadReview(token: string): Promise<ReviewResult> {
     return this.loadTokenFile<ReviewResult>("review", token);
+  }
+
+  async deleteReview(token: string): Promise<void> {
+    return this.deleteTokenFile("review", token);
   }
 
   private getFilePath(token: string): string {
@@ -102,5 +122,15 @@ export class FileHandoffStore {
     } catch {
       throw createTokenError(kind, "unreadable");
     }
+  }
+
+  private async deleteTokenFile(
+    kind: "plan" | "review",
+    token: string,
+  ): Promise<void> {
+    if (!isValidToken(kind, token))
+      throw createTokenError(kind, "invalid-format");
+
+    await deleteFileIfExists(this.getFilePath(token));
   }
 }

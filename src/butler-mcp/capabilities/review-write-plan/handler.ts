@@ -29,6 +29,8 @@ export async function handleReviewWritePlan(
       ? await context.handoffStore.saveReview(reviewResult)
       : undefined;
 
+  await context.handoffStore.deletePlan(input.plan_token);
+
   return {
     decision: reviewResult.decision,
     review_token: reviewToken,

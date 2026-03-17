@@ -46,6 +46,8 @@ export async function handleExecuteReviewedWritePlan(
     });
   }
 
+  await context.handoffStore.deleteReview(input.review_token);
+
   return {
     journal_date: writePlan?.target_page.journal_date,
     page_id: pageRef?.object_id,

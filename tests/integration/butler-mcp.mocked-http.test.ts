@@ -294,6 +294,11 @@ test("capture flow downgrades when the target daily note is still missing", asyn
     plan_token: prepared.plan_token,
   });
 
+  await assert.rejects(
+    () => mock.context.handoffStore.loadPlan(prepared.plan_token),
+    /未找到对应的 plan token 文件/,
+  );
+
   assert.deepEqual(prepared.blocked_by, [
     `目标日志页 ${JOURNAL_DATE} 尚不存在。`,
     "目标章节 sparkles 尚不存在，暂不能形成稳定写入目标。",
@@ -354,6 +359,10 @@ test("execute-reviewed-write-plan refuses ask_confirm results before confirmatio
         review_token: reviewToken,
       }),
     /当前 WritePlan 仍需用户确认，不能提前执行。/,
+  );
+
+  await assert.doesNotReject(() =>
+    mock.context.handoffStore.loadReview(reviewToken),
   );
 
   mock.assertAllRequestsHandled();
@@ -425,6 +434,11 @@ test("execute-reviewed-write-plan retargets when the cached Sparkles section is 
   const result = await handleExecuteReviewedWritePlan(mock.context, {
     review_token: reviewToken,
   });
+
+  await assert.rejects(
+    () => mock.context.handoffStore.loadReview(reviewToken),
+    /未找到对应的 review token 文件/,
+  );
 
   assert.equal(result.journal_date, todayDate);
   assert.equal(result.page_id, PAGE_ID);
@@ -505,6 +519,11 @@ test("execute-reviewed-write-plan retargets when the cached Sparkles section now
   const result = await handleExecuteReviewedWritePlan(mock.context, {
     review_token: reviewToken,
   });
+
+  await assert.rejects(
+    () => mock.context.handoffStore.loadReview(reviewToken),
+    /未找到对应的 review token 文件/,
+  );
 
   assert.equal(result.section_id, currentSectionId);
   assert.equal(result.repaired_section, true);
@@ -588,6 +607,11 @@ test("execute-reviewed-write-plan retargets when the cached Sparkles heading lab
   const result = await handleExecuteReviewedWritePlan(mock.context, {
     review_token: reviewToken,
   });
+
+  await assert.rejects(
+    () => mock.context.handoffStore.loadReview(reviewToken),
+    /未找到对应的 review token 文件/,
+  );
 
   assert.equal(result.section_id, currentSectionId);
   assert.equal(result.repaired_section, true);
@@ -692,6 +716,11 @@ test("execute-reviewed-write-plan auto-repairs when the cached Sparkles heading 
   const result = await handleExecuteReviewedWritePlan(mock.context, {
     review_token: reviewToken,
   });
+
+  await assert.rejects(
+    () => mock.context.handoffStore.loadReview(reviewToken),
+    /未找到对应的 review token 文件/,
+  );
 
   assert.equal(result.journal_date, todayDate);
   assert.equal(result.page_id, PAGE_ID);
