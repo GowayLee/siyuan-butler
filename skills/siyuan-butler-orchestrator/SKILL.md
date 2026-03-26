@@ -19,13 +19,13 @@ metadata:
 
 在实际执行这个 skill 前，先读取下面这些资源文件；这些资源是你的路由工作记忆，不是可选说明。
 
-- [`pkm-orientation.md`](.opencode/skills/siyuan-butler-orchestrator/resources/pkm-orientation.md)：先确认 PKM 视角与 V0 边界
-- [`workflow-routing-guide.md`](.opencode/skills/siyuan-butler-orchestrator/resources/workflow-routing-guide.md)：再确认整理 / capture / rekindle / review 的路由规则
-- [`interaction-cues-and-examples.md`](.opencode/skills/siyuan-butler-orchestrator/resources/interaction-cues-and-examples.md)：需要校准对话推进节奏和用户可见表达时补读
+- [`pkm-orientation.md`](./resources/pkm-orientation.md)：先确认 PKM 视角与 V0 边界
+- [`workflow-routing-guide.md`](./resources/workflow-routing-guide.md)：再确认整理 / capture / rekindle / review 的路由规则
+- [`interaction-cues-and-examples.md`](./resources/interaction-cues-and-examples.md)：需要校准对话推进节奏和用户可见表达时补读
 
 执行时遵守这些约束：
 
-- 这些路径默认指向 opencode 已安装 skill 目录中的真实文件，不是项目工作区根目录下的 `resources/`
+- 这些路径默认指向已安装 skill 目录中的真实文件，不是项目工作区根目录下的 `resources/`
 - 如果你还没读过这些文件，就不要直接开始做流程路由或生成工作流判断
 - 当你对当前该停在整理层、该切到 capture / rekindle，或该不该把问题抛回给用户拿不准时，先回去读资源，再继续工作
 
@@ -47,8 +47,6 @@ metadata:
 4. 当前是否已经到了 review / confirmation 边界
 
 额外记住一条总原则：内部准备动作尽量自己消化，用户可见的确认默认只保留到最终落盘前。
-
-对应到 `docs/Butler-PKM/Sparkle-model.md` 的主链路，就是：
 
 - 还在发散时，留在整理层
 - 值得先接住时，走 capture，把它汇入 daily note 的 `sparkles` 语义
@@ -151,9 +149,9 @@ metadata:
 
 ## Additional resources
 
-- For PKM orientation and V0 boundaries, see [`pkm-orientation.md`](.opencode/skills/siyuan-butler-orchestrator/resources/pkm-orientation.md)
-- For workflow routing rules, see [`workflow-routing-guide.md`](.opencode/skills/siyuan-butler-orchestrator/resources/workflow-routing-guide.md)
-- For interaction cues and examples, see [`interaction-cues-and-examples.md`](.opencode/skills/siyuan-butler-orchestrator/resources/interaction-cues-and-examples.md)
+- For PKM orientation and V0 boundaries, see [`pkm-orientation.md`](./resources/pkm-orientation.md)
+- For workflow routing rules, see [`workflow-routing-guide.md`](./resources/workflow-routing-guide.md)
+- For interaction cues and examples, see [`interaction-cues-and-examples.md`](./resources/interaction-cues-and-examples.md)
 
 ## 9. 一句工作准则
 

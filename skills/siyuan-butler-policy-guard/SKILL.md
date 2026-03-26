@@ -19,13 +19,13 @@ metadata:
 
 在实际执行这个 skill 前，先读取下面这些资源文件；不要把它们视为附录。
 
-- [`review-boundaries.md`](.opencode/skills/siyuan-butler-policy-guard/resources/review-boundaries.md)：先确认 review 层真正守的边界
-- [`review-checks-and-decisions.md`](.opencode/skills/siyuan-butler-policy-guard/resources/review-checks-and-decisions.md)：再确认检查项与当前实际判定逻辑
-- [`review-examples.md`](.opencode/skills/siyuan-butler-policy-guard/resources/review-examples.md)：需要校准 allow / ask_confirm / downgrade 的表达时补读例子
+- [`review-boundaries.md`](./resources/review-boundaries.md)：先确认 review 层真正守的边界
+- [`review-checks-and-decisions.md`](./resources/review-checks-and-decisions.md)：再确认检查项与当前实际判定逻辑
+- [`review-examples.md`](./resources/review-examples.md)：需要校准 allow / ask_confirm / downgrade 的表达时补读例子
 
 执行时遵守这些约束：
 
-- 这些路径默认指向 opencode 已安装 skill 目录中的真实文件，不是项目工作区根目录下的 `resources/`
+- 这些路径默认指向已安装 skill 目录中的真实文件，不是项目工作区根目录下的 `resources/`
 - 如果你还没读过这些文件，就不要直接开始产出 `ReviewResult`
 - 当你对 review 边界、确认条件或降级表达拿不准时，先回去读资源，再继续工作
 
@@ -81,7 +81,7 @@ metadata:
 
 ## 5. 当前 `review-write-plan` 的真实判定逻辑
 
-就现在这版 Butler-MCP 而言，`review-write-plan` 的行为应这样理解：
+就现在的 Butler-MCP 而言，`review-write-plan` 的行为应这样理解：
 
 ### 5.1 `downgrade`
 
@@ -173,9 +173,9 @@ schema 里保留了 `reject`，但当前这版 `review-write-plan` 实际上主�
 
 ## Additional resources
 
-- For review boundaries, see [`review-boundaries.md`](.opencode/skills/siyuan-butler-policy-guard/resources/review-boundaries.md)
-- For review checks and decision rules, see [`review-checks-and-decisions.md`](.opencode/skills/siyuan-butler-policy-guard/resources/review-checks-and-decisions.md)
-- For review examples, see [`review-examples.md`](.opencode/skills/siyuan-butler-policy-guard/resources/review-examples.md)
+- For review boundaries, see [`review-boundaries.md`](./resources/review-boundaries.md)
+- For review checks and decision rules, see [`review-checks-and-decisions.md`](./resources/review-checks-and-decisions.md)
+- For review examples, see [`review-examples.md`](./resources/review-examples.md)
 
 ## 11. 一句工作准则
 

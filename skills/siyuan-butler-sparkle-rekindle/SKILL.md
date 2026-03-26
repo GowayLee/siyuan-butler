@@ -19,14 +19,14 @@ metadata:
 
 在实际执行这个 skill 前，先读取下面这些资源文件；不要把它们视为尾注式参考资料。
 
-- [`sparkle-foundations.md`](.opencode/skills/siyuan-butler-sparkle-rekindle/resources/sparkle-foundations.md)：先确认 rekindle 必须继承的 Sparkle 起点
-- [`rekindle-field-mapping.md`](.opencode/skills/siyuan-butler-sparkle-rekindle/resources/rekindle-field-mapping.md)：再确认 `RekindleProposal` 字段与 runtime 边界
-- [`rekindle-maturity-guide.md`](.opencode/skills/siyuan-butler-sparkle-rekindle/resources/rekindle-maturity-guide.md)：判断成熟度与 `postpone` 边界时必读
-- [`rekindle-examples.md`](.opencode/skills/siyuan-butler-sparkle-rekindle/resources/rekindle-examples.md)：需要校准正文写法和提案风格时补读例子
+- [`sparkle-foundations.md`](./resources/sparkle-foundations.md)：先确认 rekindle 必须继承的 Sparkle 起点
+- [`rekindle-field-mapping.md`](./resources/rekindle-field-mapping.md)：再确认 `RekindleProposal` 字段与 runtime 边界
+- [`rekindle-maturity-guide.md`](./resources/rekindle-maturity-guide.md)：判断成熟度与 `postpone` 边界时必读
+- [`rekindle-examples.md`](./resources/rekindle-examples.md)：需要校准正文写法和提案风格时补读例子
 
 执行时遵守这些约束：
 
-- 这些路径默认指向 opencode 已安装 skill 目录中的真实文件，不是项目工作区根目录下的 `resources/`
+- 这些路径默认指向已安装 skill 目录中的真实文件，不是项目工作区根目录下的 `resources/`
 - 如果你还没读过这些文件，就不要直接开始产出 `RekindleProposal`
 - 当你对成熟度、字段映射、正文风格拿不准时，先回去读资源，再继续工作
 
@@ -166,10 +166,10 @@ metadata:
 
 ## Additional resources
 
-- For Sparkle foundations, see [`sparkle-foundations.md`](.opencode/skills/siyuan-butler-sparkle-rekindle/resources/sparkle-foundations.md)
-- For rekindle field mapping and runtime boundaries, see [`rekindle-field-mapping.md`](.opencode/skills/siyuan-butler-sparkle-rekindle/resources/rekindle-field-mapping.md)
-- For maturity rules and postpone boundaries, see [`rekindle-maturity-guide.md`](.opencode/skills/siyuan-butler-sparkle-rekindle/resources/rekindle-maturity-guide.md)
-- For rekindle examples, see [`rekindle-examples.md`](.opencode/skills/siyuan-butler-sparkle-rekindle/resources/rekindle-examples.md)
+- For Sparkle foundations, see [`sparkle-foundations.md`](./resources/sparkle-foundations.md)
+- For rekindle field mapping and runtime boundaries, see [`rekindle-field-mapping.md`](./resources/rekindle-field-mapping.md)
+- For maturity rules and postpone boundaries, see [`rekindle-maturity-guide.md`](./resources/rekindle-maturity-guide.md)
+- For rekindle examples, see [`rekindle-examples.md`](./resources/rekindle-examples.md)
 
 ## 12. 一句工作准则
 

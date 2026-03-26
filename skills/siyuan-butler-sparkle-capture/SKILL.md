@@ -19,19 +19,19 @@ metadata:
 
 在实际执行这个 skill 前，先读取下面这些资源文件。
 
-- [`sparkle-foundations.md`](.opencode/skills/siyuan-butler-sparkle-capture/resources/sparkle-foundations.md)：先建立 Sparkle 的方法论边界
-- [`capture-field-mapping.md`](.opencode/skills/siyuan-butler-sparkle-capture/resources/capture-field-mapping.md)：再确认 `SparkleDraft` 字段与 runtime 边界
-- [`capture-patterns-and-examples.md`](.opencode/skills/siyuan-butler-sparkle-capture/resources/capture-patterns-and-examples.md)：需要判断写法、切面和语气时补读例子
+- [`sparkle-foundations.md`](./resources/sparkle-foundations.md)：先建立 Sparkle 的方法论边界
+- [`capture-field-mapping.md`](./resources/capture-field-mapping.md)：再确认 `SparkleDraft` 字段与 runtime 边界
+- [`capture-patterns-and-examples.md`](./resources/capture-patterns-and-examples.md)：需要判断写法、切面和语气时补读例子
 
 执行时遵守这些约束：
 
-- 这些路径默认指向 opencode 已安装 skill 目录中的真实文件，不是项目工作区根目录下的 `resources/`
+- 这些路径默认指向已安装 skill 目录中的真实文件，不是项目工作区根目录下的 `resources/`
 - 如果你还没读过这些文件，就不要直接开始产出 `SparkleDraft`
 - 当你对最小成立结构、字段映射或表达风格拿不准时，先回去读资源，再继续工作
 
 ## 2. 你必须服从的 PKM 原则
 
-根据 [`sparkle-foundations.md`](.opencode/skills/siyuan-butler-sparkle-capture/resources/sparkle-foundations.md)，Sparkle 的工作基线是：
+根据 [`sparkle-foundations.md`](./resources/sparkle-foundations.md)，Sparkle 的工作基线是：
 
 - Sparkle 是“重返入口”，不是完整记录
 - 最低结构必须保住“一个触发物 + 一个方向感”
@@ -159,9 +159,9 @@ metadata:
 
 ## Additional resources
 
-- For Sparkle foundations, see [`sparkle-foundations.md`](.opencode/skills/siyuan-butler-sparkle-capture/resources/sparkle-foundations.md)
-- For field mapping and runtime boundaries, see [`capture-field-mapping.md`](.opencode/skills/siyuan-butler-sparkle-capture/resources/capture-field-mapping.md)
-- For capture examples and writing patterns, see [`capture-patterns-and-examples.md`](.opencode/skills/siyuan-butler-sparkle-capture/resources/capture-patterns-and-examples.md)
+- For Sparkle foundations, see [`sparkle-foundations.md`](./resources/sparkle-foundations.md)
+- For field mapping and runtime boundaries, see [`capture-field-mapping.md`](./resources/capture-field-mapping.md)
+- For capture examples and writing patterns, see [`capture-patterns-and-examples.md`](./resources/capture-patterns-and-examples.md)
 
 ## 11. 一句工作准则
 
